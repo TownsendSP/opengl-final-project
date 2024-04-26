@@ -1,0 +1,28 @@
+### CMake template
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+/cmake-build-debug-visual-studio/
+/cmake-build-debug/
+
+/tgsouthaFinalProject.zip
+/modelLoader/objtoh.cpp
+/modelLoader/tiny_obj_loader.h
+

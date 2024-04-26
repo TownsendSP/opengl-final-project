@@ -156,7 +156,6 @@ void setupRight() {
     if (showInfoViewport) {
         // glViewport(lVportW, 0, rVportW, height);
         glViewport(lVportW, 0, effectiveWidth, height);
-
     } else {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glViewport(0, 0, totalWidth, height);
@@ -187,8 +186,6 @@ void setupRight() {
     cam.lookAt();
     // glClearColor(rVPColorData.R, rVPColorData.G, rVPColorData.B, rVPColorData.A);
 }
-
-
 
 
 void drawModel(ModelVertex modelVertices[], unsigned int modelIndices[], int numVertices, int numIndices) {
@@ -229,29 +226,26 @@ void drawLitShapes() {
     glShadeModel(GL_SMOOTH);
 
 
-  tableMat.apply();
-  glPushMatrix();
-  glTranslatef(10, 1, 10);
-  drawModel(hatVertices, hatIndices, 36, 126);
-  glPopMatrix();
-
-   wallMat.apply();
-  glPushMatrix();
-  glTranslatef(0, 0, 20);
-  drawModel(obiwanVertices, obiwanIndices, 37460, 37467);
-  glPopMatrix();
-
-
-    glShadeModel(GL_FLAT);
-    //verts: 14805
-    //idxs: 70848
-    castIronMat.apply();
+    tableMat.apply();
     glPushMatrix();
-    // glTranslatef(-10, 0, -10);
-    drawModel(crystalVertices, crystalIndices, 11815, 70848);
+    glTranslatef(0, 1, 0);
+    glScalef(2, 2, 2);
+    drawModel(hatVertices, hatIndices, 36, 126);
     glPopMatrix();
 
-   // headLamp.enable();
+
+    // glShadeModel(GL_FLAT);
+    //verts: 14805
+    //idxs: 70848
+    std::cout << "Drawing CrystalThing" << std::endl;
+    castIronMat.apply();
+    glPushMatrix();
+    glTranslatef(-10, 2, -10);
+    glScalef(2, 2, 2);
+    drawModel(crystalVertices, crystalIndices, 2900, 4428);
+    glPopMatrix();
+
+    // headLamp.enable();
     //
     // ceilingMat.apply();
     // glPushMatrix();
@@ -292,17 +286,6 @@ void drawUnlitShapes() {
     // }
 
 
-
-
-
-
-
-
-
-
-
-
-
     // testConeArot();
 
 
@@ -341,6 +324,7 @@ void drawWindow() {
 
     glutSwapBuffers();
 }
+
 //folding-region draw
 #endif
 
@@ -471,19 +455,19 @@ void mouseControl(int button, int state, int x, int y) {
         selecting = true;
         selectLock = selectLockingEnabled;
         // if selectLock, set
-        glutSetCursor(selectLock? GLUT_CURSOR_LEFT_ARROW: GLUT_CURSOR_FULL_CROSSHAIR);
-        if(!selectLock) {
+        glutSetCursor(selectLock ? GLUT_CURSOR_LEFT_ARROW : GLUT_CURSOR_FULL_CROSSHAIR);
+        if (!selectLock) {
             xClick = x;
             yClick = height - y;
-        }//for screen vs mouse coordinates}}
+        } //for screen vs mouse coordinates}}
         glutPostRedisplay();
     }
     if (state == GLUT_UP && button == GLUT_LEFT) {
         selectLock = false;
         //reset cursor to default:
         glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
-        xClick=x;
-        yClick=height-y;
+        xClick = x;
+        yClick = height - y;
     }
 }
 
