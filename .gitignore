@@ -23,6 +23,7 @@ gen
 /cmake-build-debug/
 
 /tgsouthaFinalProject.zip
-/modelLoader/objtoh.cpp
+/modelLoader/objtoh.cpp>
 /modelLoader/tiny_obj_loader.h
 
+/modelLoader/objtoh.cpp
