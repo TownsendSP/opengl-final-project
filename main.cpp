@@ -16,8 +16,7 @@
 
 //My Imports and Defines
 
-#include "models/crystal.h"
-#include "models/hat.h"
+
 #include "src/Coord.h"
 #include "src/Camera.h"
 #include "src/things.h"
@@ -26,8 +25,11 @@
 #include "src/lighting.h"
 #include "src/testingFunctions.h"
 #include "src/LeftVP.h"
-#include "models/obiwan.h"
-#include "models/lightsaber.h"
+
+#include "res/models/hat.h"
+#include "res/models/crystal.h"
+#include "src/modelLoader.h"
+#include "src/textureLoader.h"
 
 
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
@@ -42,7 +44,6 @@ int height = 701;
 
 
 #endif
-
 
 #ifndef FOLDING_REGION_Global_Objects
 Camera cam = Camera();
@@ -226,42 +227,44 @@ void drawLitShapes() {
     glShadeModel(GL_SMOOTH);
 
 
-    tableMat.apply();
-    glPushMatrix();
-    glTranslatef(0, 1, 0);
-    glScalef(2, 2, 2);
-    drawModel(hatVertices, hatIndices, 36, 126);
-    glPopMatrix();
-
-
-    // glShadeModel(GL_FLAT);
-    //verts: 14805
-    //idxs: 70848
-    std::cout << "Drawing CrystalThing" << std::endl;
-    castIronMat.apply();
-    glPushMatrix();
-    glTranslatef(-10, 2, -10);
-    glScalef(2, 2, 2);
-    drawModel(crystalVertices, crystalIndices, 2900, 4428);
-    glPopMatrix();
-
-    // headLamp.enable();
+    // tableMat.apply();
+    // glPushMatrix();
+    // glTranslatef(0, 1, 0);
+    // glScalef(2, 2, 2);
+    // drawModel(hatVertices, hatIndices, 36, 126);
+    // glPopMatrix();
     //
-    // ceilingMat.apply();
+    //
+    // // glShadeModel(GL_FLAT);
+    // //verts: 14805
+    // //idxs: 70848
+    // castIronMat.apply();
     // glPushMatrix();
-    // glTranslatef(0, 10, 0);
-    // glRotatef(90, 1, 0, 0);
-    // glutSolidTorus(25, 50, 150, 100);
+    // glTranslatef(-10, 2, -10);
+    // glScalef(2, 2, 2);
+    // drawModel(crystalVertices, crystalIndices, 2900, 4428);
     // glPopMatrix();
+    glDisable(GL_LIGHTING);
+    // glBindTexture(GL_TEXTURE_2D, texture[0]);
     // glPushMatrix();
-    // glTranslatef(0, 10, 0);
-    // glRotatef(90, 0, 1, 0);
-    // glutSolidTorus(25, 50, 250, 100);
+    // glTranslatef(10, 2, 10);
+    // drawHatUV();
     // glPopMatrix();
-    // glPushMatrix();
-    // glTranslatef(0, 10, 0);
-    // glutSolidTorus(25, 50, 250, 100);
-    // glPopMatrix();
+
+    // Activate a texture.
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
+
+    // Map the texture onto a square polygon.
+    glBegin(GL_POLYGON);
+    glTexCoord2f(0.0, 0.0);
+    glVertex3f(-10.0, -10.0, 0.0);
+    glTexCoord2f(1.0, 0.0);
+    glVertex3f(10.0, -10.0, 0.0);
+    glTexCoord2f(1.0, 1.0);
+    glVertex3f(10.0, 10.0, 0.0);
+    glTexCoord2f(0.0, 1.0);
+    glVertex3f(-10.0, 10.0, 0.0);
+    glEnd();
 
     glDisable(GL_LIGHTING);
     // glDisable(headLamp);
@@ -313,15 +316,21 @@ void drawWindow() {
     }
     setupRight();
 
-    drawUnlitShapes();
+
 
     // drawMoreShapes();
 
     // headLamp.enable();
 
     drawLitShapes();
+    glDisable(GL_LIGHTING);
+    drawUnlitShapes();
 
-
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    glPushMatrix();
+    glTranslatef(10, 2, 10);
+    drawHatUV();
+    glPopMatrix();
     glutSwapBuffers();
 }
 
@@ -393,6 +402,17 @@ void setupLights() {
     headLamp.enable();
 }
 
+void setupTextures() {
+    glGenTextures(1, texture);
+    loadTexture("res/textures/ba_00303.bmp", 0);
+    // Turn on OpenGL texturing.
+    glEnable(GL_TEXTURE_2D);
+    // Specify how texture values combine with current surface color values.
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+
+}
+
 void setup() {
     winner = useTimeToSeedRandomToSetWinner();
     roomBnlF[0] = 2 * hallBnlF[0];
@@ -427,7 +447,7 @@ void setup() {
     glShadeModel(GL_SMOOTH);
     //check if light0 is enabled with a printStatement:
     //glListallEnabled:
-
+    setupTextures();
     setupObjects();
     glClearColor(rVPColorData.R, rVPColorData.G, rVPColorData.B, rVPColorData.A);
 }
@@ -524,8 +544,6 @@ void activateDoor() {
             break;
     }
 }
-
-bool useCaps = false;
 
 
 void hallLightAction() {

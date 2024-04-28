@@ -3,7 +3,6 @@ project(tgsouthaFinalProject)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_CXX_STANDARD 17)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(CMAKE_PREFIX_PATH "C:/Program/NVIDIA Corporation/Cg")
 endif()
@@ -34,15 +33,26 @@ add_executable(${MAIN_BINARY_NAME} main.cpp
         src/Scenedraw.cpp
         src/testingFunctions.cpp
         src/testingFunctions.h
-        models/hat.h
-        models/obiwan.h
-        models/crystal.h
-        models/lightsaber.h
+        res/models/hat.h
+        res/models/obiwan.h
+        res/models/crystal.h
+        res/models/lightsaber.h
+        src/textureLoader.cpp
+        src/textureLoader.h
+        res/models/hatuv.h
+        src/modelLoader.cpp
+        src/modelLoader.h
 )
 target_link_libraries (${MAIN_BINARY_NAME}  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
 
 
 add_executable(objtoh
-        modelLoader/objtoh.cpp
-        modelLoader/tiny_obj_loader.h
+        objtoh/objtoh.cpp
+        objtoh/tiny_obj_loader.h
+)
+
+
+add_executable(testing
+        mainForTesting.cpp
+
 )

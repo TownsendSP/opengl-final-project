@@ -23,22 +23,6 @@ Coord roomBnl = Coord(halltfr.X, hallBnl.Y, 3 * hallBnl.Z);
 Coord roomtfr = Coord(2 * halltfr.X, halltfr.Y, 3 * halltfr.Z);
 
 
-bool roomCollides(Coord loc) {
-    return !((loc.X < roomBnl.X || loc.X > roomtfr.X)
-        && (loc.Y < roomBnl.Y || loc.Y > roomtfr.Y)
-        && (loc.Z < roomBnl.Z || loc.Z > roomtfr.Z));
-
-}
-bool hallCollides(Coord loc) {
-    return !(((loc.X < hallBnl.X || loc.X > halltfr.X)|| doorOpenPercent > 90)
-        && (loc.Y < hallBnl.Y || loc.Y > halltfr.Y)
-        && (loc.Z < hallBnl.Z || loc.Z > halltfr.Z));
-}
-
-
-
-
-
 Coord troubleshootingBnl = halltfr * 0.45;
 Coord troubleshootingtfr = halltfr * 0.55;
 Coord lampPos = Coord(roomBnl.X+5, halltfr.Y-0.3, 0);
@@ -49,31 +33,6 @@ float t() {
 
 #include <vector>
 #include <cmath>
-
-std::vector<float> returnEvenlySpaced(int requestedPoints, float minDist, float maxVal) {
-    if (requestedPoints <= 0 || minDist <= 0 || maxVal < 0) {
-        return {};
-    }
-    float idealSpacing = (maxVal - minDist) / (requestedPoints - 1);
-    if (idealSpacing >= minDist) {
-        std::vector<float> points(requestedPoints);
-        for (int i = 0; i < requestedPoints; ++i) {
-            points[i] = minDist * i + minDist;
-        }
-        return points;
-    } else {
-        // Minimum distance cannot be satisfied, calculate how many points fit
-        int actualPoints = std::floor((maxVal - minDist) / minDist) + 1;
-
-        // Create the vector with adjusted spacing (maxVal divided by actual points)
-        std::vector<float> points(actualPoints);
-        float step = maxVal / (actualPoints - 1);
-        for (int i = 0; i < actualPoints; ++i) {
-            points[i] = i * step;
-        }
-        return points;
-    }
-}
 
 
 Coord tableBnl = Coord(roomtfr.X - 2, roomBnl.Y, -1.5);

@@ -298,10 +298,14 @@ extern bool windowFocused;
 extern bool selectLock;
 extern bool selectLockingEnabled;
 
-
+//TODO: move this to the objtoh files.
 struct ModelVertex {
     float position[3];
     float normal[3];
 };
+const unsigned int numTextures = 1;
+static unsigned int texture[numTextures];
+// std::map <std::string, int > textureMap;
+
 
 #endif //GLOBALS_H
