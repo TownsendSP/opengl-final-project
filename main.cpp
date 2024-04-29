@@ -244,12 +244,18 @@ void drawLitShapes() {
     // glScalef(2, 2, 2);
     // drawModel(crystalVertices, crystalIndices, 2900, 4428);
     // glPopMatrix();
-    glDisable(GL_LIGHTING);
-    // glBindTexture(GL_TEXTURE_2D, texture[0]);
-    // glPushMatrix();
-    // glTranslatef(10, 2, 10);
-    // drawHatUV();
-    // glPopMatrix();
+
+    glEnable(GL_TEXTURE_2D);
+
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+    // glDisable(GL_LIGHTING);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    glPushMatrix();
+    glTranslatef(10, 2, 10);
+    drawHatUV();
+    glPopMatrix();
+    glutSwapBuffers();
 
     // Activate a texture.
     glBindTexture(GL_TEXTURE_2D, texture[0]);
@@ -266,7 +272,9 @@ void drawLitShapes() {
     glVertex3f(-10.0, 10.0, 0.0);
     glEnd();
 
-    glDisable(GL_LIGHTING);
+
+    glDisable(GL_TEXTURE_2D);
+
     // glDisable(headLamp);
 }
 
@@ -316,22 +324,18 @@ void drawWindow() {
     }
     setupRight();
 
-
-
-    // drawMoreShapes();
-
-    // headLamp.enable();
-
-    drawLitShapes();
     glDisable(GL_LIGHTING);
+
     drawUnlitShapes();
 
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
-    glPushMatrix();
-    glTranslatef(10, 2, 10);
-    drawHatUV();
-    glPopMatrix();
-    glutSwapBuffers();
+    drawLitShapes();
+    // glDisable(GL_LIGHTING);
+
+
+
+    // glDisable(GL_BLEND);
+
+
 }
 
 //folding-region draw
@@ -403,12 +407,16 @@ void setupLights() {
 }
 
 void setupTextures() {
-    glGenTextures(1, texture);
-    loadTexture("res/textures/ba_00303.bmp", 0);
+    glGenTextures(2, texture);
+    loadTexture("res/textures/hat.bmp", 0);
+
+
+
+
     // Turn on OpenGL texturing.
-    glEnable(GL_TEXTURE_2D);
+    // glEnable(GL_TEXTURE_2D);
     // Specify how texture values combine with current surface color values.
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 
 }

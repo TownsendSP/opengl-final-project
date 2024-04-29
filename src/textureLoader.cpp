@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <utility>
 #include <fstream>
 
 BitMapFile *getBMPData(std::string filename) {
@@ -51,9 +52,9 @@ void loadTexture(std::string filename, int id) {
     BitMapFile *image[1];
 
     // Load the texture.
-    image[0] = getBMPData(filename);
+    image[0] = getBMPData(std::move(filename));
     // Activate texture index texture[0].
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    glBindTexture(GL_TEXTURE_2D, texture[id]);
 
     // Set texture parameters for wrapping.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -69,4 +70,5 @@ void loadTexture(std::string filename, int id) {
 
     // Add to the texture map
     // textureMap[filename] = id;
+
 }

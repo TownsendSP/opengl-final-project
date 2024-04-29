@@ -16,10 +16,7 @@
 #include <cstdint>
 #include <streambuf>
 #include <string>
-#include <iostream>
 #include <sstream>
-#include <iomanip>
-#include <limits>
 #include <map>
 #include <map>
 #include <string>
@@ -280,23 +277,6 @@ void glNormal3fvd(float whyAreMyNormalsBroken[3]);
 
 
 
-extern bool selecting;
-extern int xClick;
-extern int yClick;
-extern float globAmb[4];
-
-extern float hallBnlF[3];
-extern float halltfrF[3];
-extern float roomBnlF[3];
-extern float roomtfrF[3];
-extern bool useCollision;
-extern float moveSpeed;
-extern float cardDist;
-
-extern bool bufferPeeking;
-extern bool windowFocused;
-extern bool selectLock;
-extern bool selectLockingEnabled;
 
 //TODO: move this to the objtoh files.
 struct ModelVertex {
@@ -304,8 +284,12 @@ struct ModelVertex {
     float normal[3];
 };
 const unsigned int numTextures = 1;
-static unsigned int texture[numTextures];
-// std::map <std::string, int > textureMap;
+
+extern unsigned int texture[numTextures];
+
+extern unsigned int numAnimFrames;
+
+extern std::map<std::string, int> textureMap;
 
 
 #endif //GLOBALS_H

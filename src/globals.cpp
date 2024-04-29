@@ -5,6 +5,7 @@
 # include "globals.h"
 
 #include <chrono>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <random>
@@ -417,7 +418,12 @@ bool selectLock = false;
 bool selectLockingEnabled = false;
 
 
+unsigned int texture[numTextures];
 
+
+unsigned int numAnimFrames;
+
+std::map<std::string, int> textureMap;
 
 
 

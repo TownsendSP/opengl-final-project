@@ -28,6 +28,7 @@
 #include <iostream>
 #include <fstream>
 
+
 #ifdef __APPLE__
 #  include <GLUT/glut.h>
 #else
@@ -37,7 +38,7 @@
 using namespace std;
 
 // Globals.
-static unsigned int texture[2]; // Array of texture indices.
+// static unsigned int texture[2]; // Array of texture indices.
 static unsigned char chessboard[64][64][3]; // Storage for chessboard image.
 static float angle = 0.0; // Angle to rotate textured square.
 static int id = 0; // Currently displayed texture id.

@@ -43,7 +43,14 @@ add_executable(${MAIN_BINARY_NAME} main.cpp
         src/modelLoader.cpp
         src/modelLoader.h
 )
+
 target_link_libraries (${MAIN_BINARY_NAME}  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
+
+add_executable(testing
+        mainForTesting.cpp
+)
+target_link_libraries (${TESTING_BINARY_NAME}  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
+
 
 
 add_executable(objtoh
@@ -52,7 +59,3 @@ add_executable(objtoh
 )
 
 
-add_executable(testing
-        mainForTesting.cpp
-
-)
