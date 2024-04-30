@@ -6,11 +6,10 @@
 #define FSCENEOBJS_H
 
 
-
 class fSceneObjs {
-
 };
 
+void drawTexEgs();
 
 
 #endif //FSCENEOBJS_H

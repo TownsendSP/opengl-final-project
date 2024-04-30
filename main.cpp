@@ -4,6 +4,8 @@
 # include <GL/glut.h>
 #endif
 
+#define PI 3.1415926
+
 #include "src/globals.h"
 #include <iostream>
 #include <chrono>
@@ -31,6 +33,7 @@
 #include "src/modelLoader.h"
 #include "src/Scenedraw.h"
 #include "src/textureLoader.h"
+#include "src/fSceneObjs.h"
 
 
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
@@ -189,6 +192,8 @@ void drawModel(ModelVertex modelVertices[], unsigned int modelIndices[], int num
     glDisableClientState(GL_NORMAL_ARRAY);
 }
 
+
+
 void drawLitShapes() {
     glEnable(GL_LIGHTING);
     // sunLight.enable();
@@ -227,44 +232,7 @@ void drawLitShapes() {
     // glScalef(2, 2, 2);
     // drawModel(crystalVertices, crystalIndices, 2900, 4428);
     // glPopMatrix();
-    glDisable(GL_LIGHTING);
-    glEnable(GL_TEXTURE_2D);
-
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-    // glDisable(GL_LIGHTING);
-    int hatTexIdx = textureMap["res/textures/minsize/hat.bmp"];
-    // std::map<std::string, int > it = textureMap;
-
-    glBindTexture(GL_TEXTURE_2D, texture[hatTexIdx]);
-    glPushMatrix();
-    glTranslatef(10, 2, 10);
-    drawHatUV();
-    glPopMatrix();
-    // glDisable(GL_TEXTURE_2D);
-    // // Activate a texture.
-    // // std::cout << currFrame << std::endl;
-    // glEnable(GL_TEXTURE_2D);
-    //
-    // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    unsigned int* texturesLocal = texture;
-    int thing = currFrame;
-    glBindTexture(GL_TEXTURE_2D, texturesLocal[currFrame]);
-
-    // Map the texture onto a square polygon.
-    glPushMatrix();
-    glBegin(GL_POLYGON);
-    glTexCoord2f(0.0, 0.0);
-    glVertex3f(-10.0, -10.0, 0.0);
-    glTexCoord2f(1.0, 0.0);
-    glVertex3f(10.0, -10.0, 0.0);
-    glTexCoord2f(1.0, 1.0);
-    glVertex3f(10.0, 10.0, 0.0);
-    glTexCoord2f(0.0, 1.0);
-    glVertex3f(-10.0, 10.0, 0.0);
-    glEnd();
-    glPopMatrix();
-    glDisable(GL_TEXTURE_2D);
+    drawTexEgs();
 
     glutSwapBuffers();
 }

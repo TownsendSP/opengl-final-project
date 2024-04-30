@@ -51,8 +51,18 @@ BitMapFile *getBMPData(std::string filename) {
     return bmp;
 }
 
+
+std::string extractFileName(std::string filename) {
+    std::string::size_type slash = filename.find_last_of("/");
+    std::string::size_type period = filename.find_last_of(".");
+    return filename.substr(slash + 1, period - slash - 1);
+}
+
+
 void loadTexture(std::string filename, int id) {
-    std::string wthfilename = filename;
+    std::string pathname = filename;
+    std::string name = extractFileName(filename);
+
     BitMapFile *image[1];
 
     // Load the texture.
@@ -71,9 +81,15 @@ void loadTexture(std::string filename, int id) {
     // Specify an image as the texture to be bound with the currently active texture index.
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image[0]->sizeX, image[0]->sizeY, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, image[0]->data);
-    std::cout << "Loaded texture: " << wthfilename << " with id: " << id << " - Dimensions " << image[0]->sizeX << "x" << image[0]->sizeY << std::endl;
-    std::map<std::string, int> whyisthemapbroken = textureMap;
-    textureMap[wthfilename]  = id;
+
+
+
+    std::cout << "Loaded texture: " << pathname << " as " << name <<" with index: " << id << " - Dimensions " << image[0]->sizeX << "x" << image[0]->sizeY << std::endl;
+    // std::map<std::string, int> whyisthemapbroken = textureMap;
+
+
+
+    textureMap[name]  = id;
 }
 
 
@@ -113,7 +129,9 @@ void setupTextures() {
 
     // loadTexture("res/textures/hat.bmp", numAnimFrames);
     loadTexture("res/textures/minsize/hat.bmp", numAnimFrames);
-    loadTexture("res/textures/star.bmp", numAnimFrames);
+    loadTexture("res/textures/star.bmp", numAnimFrames + 1);
+    loadTexture("res/textures/ba.bmp", numAnimFrames + 2);
+
 
 
 
