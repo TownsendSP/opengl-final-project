@@ -418,10 +418,13 @@ bool selectLock = false;
 bool selectLockingEnabled = false;
 
 
-unsigned int texture[numTextures];
+
+unsigned int texture[NUMTEXTURES];
+
 
 
 unsigned int numAnimFrames;
+unsigned int currFrame;
 
 std::map<std::string, int> textureMap;
 
