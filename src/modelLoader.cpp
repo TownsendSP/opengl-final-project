@@ -20,7 +20,7 @@ void drawHatUV(){
     // Draw it using those pointers
     glDrawElements(GL_TRIANGLES, sizeof(hatUVIndices) / sizeof(unsigned int), GL_UNSIGNED_INT, hatUVIndices);
 
-    // Exit the vertex, normal, and texture coordinate modes
+    // Exit the vertex, normal, and texture_24 coordinate modes
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);

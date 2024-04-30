@@ -28,9 +28,9 @@
 
 
 void testTexturedPlane(Coord locPostTrans, int properTexture) {
-    glBindTexture(GL_TEXTURE_2D, texture[properTexture]);
+    glBindTexture(GL_TEXTURE_2D, texture_24[properTexture]);
 
-    // Map the texture onto a square polygon.
+    // Map the texture_24 onto a square polygon.
     glPushMatrix();
     glTranslatefv(locPostTrans);
     glBegin(GL_POLYGON);
@@ -54,24 +54,24 @@ void drawTexEgs() {
 
     // glDisable(GL_LIGHTING);
 
-    // std::map<std::string, int > it = textureMap;
+    // std::map<std::string, int > it = textureMap_24;
 
-    glBindTexture(GL_TEXTURE_2D, texture[textureMap["hat"]]);
+    glBindTexture(GL_TEXTURE_2D, texture_24[textureMap_24["hat"]]);
     glPushMatrix();
     glTranslatef(10, 2, 10);
     drawHatUV();
     glPopMatrix();
     // glDisable(GL_TEXTURE_2D);
-    // // Activate a texture.
+    // // Activate a texture_24.
     // // std::cout << currFrame << std::endl;
     // glEnable(GL_TEXTURE_2D);
     //
     // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    unsigned int* texturesLocal = texture;
+    unsigned int* texturesLocal = texture_24;
     int thing = currFrame;
-    int startext = textureMap["star"];
-    int hatTx = textureMap["hat"];
-    int baTest = textureMap["ba"];
+    int startext = textureMap_24["star"];
+    int hatTx = textureMap_24["hat"];
+    int baTest = textureMap_24["ba"];
 
     debugMap[60-1] = "str: " + std::to_string(startext) + " hat: " + std::to_string(hatTx) + " ba: " + std::to_string(baTest);
 
@@ -82,3 +82,6 @@ void drawTexEgs() {
     testTexturedPlane(Coord(-30, 10, -5), baTest);
     glDisable(GL_TEXTURE_2D);
 }
+
+
+

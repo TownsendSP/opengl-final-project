@@ -304,15 +304,20 @@ struct ModelVertex {
     float normal[3];
 };
 
-#define NUMTEXTURES 500
 
-extern unsigned int texture[NUMTEXTURES];
+#define NUMTEXTURES_24 500
+extern unsigned int texture_24[NUMTEXTURES_24];
+extern std::map<std::string, int> textureMap_24;
+
+
+#define NUMTEXTURES_32 500
+extern unsigned int texture_32[NUMTEXTURES_32];
+extern std::map<std::string, int> textureMap_32;
+
 
 extern unsigned int numAnimFrames;
-
 extern unsigned int currFrame;
 
-extern std::map<std::string, int> textureMap;
 
 
 #endif //GLOBALS_H

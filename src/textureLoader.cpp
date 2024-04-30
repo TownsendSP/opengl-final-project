@@ -72,31 +72,31 @@ void loadTexture(std::string filename, int id) {
 
     BitMapFile *image[1];
 
-    // Load the texture.
+    // Load the texture_24.
     image[0] = getBMPData(std::move(filename));
-    // Activate texture index texture[0].
-    glBindTexture(GL_TEXTURE_2D, texture[id]);
+    // Activate texture_24 index texture_24[0].
+    glBindTexture(GL_TEXTURE_2D, texture_24[id]);
 
-    // Set texture parameters for wrapping.
+    // Set texture_24 parameters for wrapping.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    // Set texture parameters for filtering.
+    // Set texture_24 parameters for filtering.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    // Specify an image as the texture to be bound with the currently active texture index.
+    // Specify an image as the texture_24 to be bound with the currently active texture_24 index.
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image[0]->sizeX, image[0]->sizeY, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, image[0]->data);
 
 
 
-    std::cout << "Loaded texture: " << pathname << " as " << name <<" with index: " << id << " - Dimensions " << image[0]->sizeX << "x" << image[0]->sizeY << std::endl;
-    // std::map<std::string, int> whyisthemapbroken = textureMap;
+    std::cout << "Loaded texture_24: " << pathname << " as " << name <<" with index: " << id << " - Dimensions " << image[0]->sizeX << "x" << image[0]->sizeY << std::endl;
+    // std::map<std::string, int> whyisthemapbroken = textureMap_24;
 
 
 
-    textureMap[name]  = id;
+    textureMap_24[name]  = id;
 }
 
 
@@ -126,10 +126,8 @@ int animVideo(int currFrameI) {
     return (currFrameI + 1) % numAnimFrames;
 }
 
-
-void setupTextures() {
-
-    glGenTextures(NUMTEXTURES, texture);
+void setupTextures_24() {
+    glGenTextures(NUMTEXTURES_24, texture_24);
 
     int numtexts = loadAnim("res/textures/minsize/");
     std::cout << "Loaded " << numtexts << " textures" << std::endl;
@@ -138,15 +136,8 @@ void setupTextures() {
     loadTexture("res/textures/hat.bmp", numAnimFrames);
     loadTexture("res/textures/star.bmp", numAnimFrames + 1);
     loadTexture("res/textures/ba.bmp", numAnimFrames + 2);
+}
 
-
-
-
-
-    // Turn on OpenGL texturing.
-    // glEnable(GL_TEXTURE_2D);
-    // Specify how texture values combine with current surface color values.
-    // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-
+void setupTextures() {
+    setupTextures_24();
 }
