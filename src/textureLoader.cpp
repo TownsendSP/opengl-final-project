@@ -2,13 +2,16 @@
 // Created by tgsp on 4/28/2024.
 //
 
-#include "globals.h"
 #include "textureLoader.h"
+#include "globals.h"
 
 #include <fstream>
-#include <iostream>
-#include <utility>
 #include <fstream>
+#include <iostream>
+#include <list>
+#include <utility>
+#include <algorithm>
+#include <filesystem>
 
 BitMapFile *getBMPData(std::string filename) {
     BitMapFile *bmp = new BitMapFile;
@@ -49,6 +52,7 @@ BitMapFile *getBMPData(std::string filename) {
 }
 
 void loadTexture(std::string filename, int id) {
+    std::string wthfilename = filename;
     BitMapFile *image[1];
 
     // Load the texture.
@@ -67,8 +71,57 @@ void loadTexture(std::string filename, int id) {
     // Specify an image as the texture to be bound with the currently active texture index.
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image[0]->sizeX, image[0]->sizeY, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, image[0]->data);
+    std::cout << "Loaded texture: " << wthfilename << " with id: " << id << " - Dimensions " << image[0]->sizeX << "x" << image[0]->sizeY << std::endl;
+    std::map<std::string, int> whyisthemapbroken = textureMap;
+    textureMap[wthfilename]  = id;
+}
 
-    // Add to the texture map
-    // textureMap[filename] = id;
+
+
+int loadAnim(const std::string &directoryForFrames) {
+    std::list<std::string> filenames;
+
+    for (const auto &entry : std::filesystem::directory_iterator(directoryForFrames)) {
+        if (entry.is_regular_file() && entry.path().extension() == ".bmp") {
+            filenames.push_back(entry.path().filename().string());
+        }
+    }
+
+    // Load each .bmp file
+    int i = 0;
+    for (const auto &filename : filenames) {
+        loadTexture(directoryForFrames + filename, i);
+        i++;
+    }
+    numAnimFrames = i;
+    // Return the number of .bmp files
+    return filenames.size();
+}
+
+
+int animVideo(int currFrameI) {
+    return (currFrameI + 1) % numAnimFrames;
+}
+
+
+void setupTextures() {
+
+    glGenTextures(NUMTEXTURES, texture);
+
+    int numtexts = loadAnim("res/textures/minsize/");
+    std::cout << "Loaded " << numtexts << " textures" << std::endl;
+
+    // loadTexture("res/textures/hat.bmp", numAnimFrames);
+    loadTexture("res/textures/minsize/hat.bmp", numAnimFrames);
+    loadTexture("res/textures/star.bmp", numAnimFrames);
+
+
+
+
+    // Turn on OpenGL texturing.
+    // glEnable(GL_TEXTURE_2D);
+    // Specify how texture values combine with current surface color values.
+    // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
 
 }

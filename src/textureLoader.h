@@ -29,8 +29,8 @@ BitMapFile *getBMPData(std::string filename);
 void loadTexture(std::string filename, int id);
 
 //returns: number of frames
-int loadAnim(std::string directoryForFrames) {
+int loadAnim(const std::string &directoryForFrames);
 
-}
+void setupTextures();
 
 #endif //TGSOUTHAFINALPROJECT_TEXTURELOADER_H

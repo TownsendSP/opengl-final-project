@@ -324,7 +324,7 @@ void Camera::relRot(Coord deltaAngle) {
 
 void Camera::updateCardInfo() {
     cardDist =pos.dist(Coord(18.6000004, 1.84333336, 0.25));
-    debugMap[60-25] = "Card Distance: " + std::to_string(cardDist);
+
 }
 
 void Camera::moveCamWithColl(Coord deltaTranslation) {

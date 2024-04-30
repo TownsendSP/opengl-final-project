@@ -275,7 +275,27 @@ extern std::map<int, std::string> dbgNormMap;
 
 void glNormal3fvd(float whyAreMyNormalsBroken[3]);
 
+extern bool selecting;
+extern int xClick;
+extern int yClick;
+extern float globAmb[4];
 
+extern float hallBnlF[3];
+extern float halltfrF[3];
+extern float roomBnlF[3];
+extern float roomtfrF[3];
+extern bool useCollision;
+extern float moveSpeed;
+extern float cardDist;
+
+extern bool bufferPeeking;
+extern bool windowFocused;
+extern bool selectLock;
+extern bool selectLockingEnabled;
+
+
+extern int animatingBlinds;
+extern int blindsProgress;
 
 
 //TODO: move this to the objtoh files.
@@ -283,11 +303,14 @@ struct ModelVertex {
     float position[3];
     float normal[3];
 };
-const unsigned int numTextures = 1;
 
-extern unsigned int texture[numTextures];
+#define NUMTEXTURES 500
+
+extern unsigned int texture[NUMTEXTURES];
 
 extern unsigned int numAnimFrames;
+
+extern unsigned int currFrame;
 
 extern std::map<std::string, int> textureMap;
 

@@ -42,6 +42,8 @@ add_executable(${MAIN_BINARY_NAME} main.cpp
         res/models/hatuv.h
         src/modelLoader.cpp
         src/modelLoader.h
+        src/fSceneObjs.cpp
+        src/fSceneObjs.h
 )
 
 target_link_libraries (${MAIN_BINARY_NAME}  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})

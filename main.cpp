@@ -29,6 +29,7 @@
 #include "res/models/hat.h"
 #include "res/models/crystal.h"
 #include "src/modelLoader.h"
+#include "src/Scenedraw.h"
 #include "src/textureLoader.h"
 
 
@@ -76,25 +77,6 @@ std::map<int, std::string> debugMap;
 int alt, ctrl, modifiers, shift;
 bool showKeybinds = true;
 std::vector<std::string> instructionVec = {
-    "======Keybinds======",
-    "F1: Toggle Information Panel",
-    "F2: Shrink Console",
-    "F3: Grow Console",
-    "F5: Load Camera States from disk",
-    "F9: Save Camera states to disk",
-    "F12: Print test bitmap Alphabet",
-    "1-5: Load Camera state from memory slot",
-    "!-%: Save Camera state to memory slot",
-    "PGUP, PGDN: Pitch camera",
-    "HOME: FOV++",
-    "END: FOV --",
-    "Up/DArrow: Move forward/back in the XZ plane",
-    "L/RArrow: Rotate Clockwise/Counterclockwise about Y",
-    "W/D: Move forward/back relative to camera in XZ",
-    "A/S: Strafe Left/Right in XZ",
-    "F/C: Ascend/Descend",
-    "SPACE: Toggle mouse Camera Control",
-    "?: View/Hide Keybindings (return to console)"
 };
 
 //mid-dark grey, kinda like blender's default background
@@ -108,6 +90,7 @@ DebugLevel defaultDebug = WEAK;
 bool detachSpotlight = false;
 //variables for FPS Counter:
 
+bool animClip = false;
 
 #endif
 
@@ -244,23 +227,32 @@ void drawLitShapes() {
     // glScalef(2, 2, 2);
     // drawModel(crystalVertices, crystalIndices, 2900, 4428);
     // glPopMatrix();
-
+    glDisable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
 
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
     // glDisable(GL_LIGHTING);
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    int hatTexIdx = textureMap["res/textures/minsize/hat.bmp"];
+    // std::map<std::string, int > it = textureMap;
+
+    glBindTexture(GL_TEXTURE_2D, texture[hatTexIdx]);
     glPushMatrix();
     glTranslatef(10, 2, 10);
     drawHatUV();
     glPopMatrix();
-    glutSwapBuffers();
-
-    // Activate a texture.
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    // glDisable(GL_TEXTURE_2D);
+    // // Activate a texture.
+    // // std::cout << currFrame << std::endl;
+    // glEnable(GL_TEXTURE_2D);
+    //
+    // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    unsigned int* texturesLocal = texture;
+    int thing = currFrame;
+    glBindTexture(GL_TEXTURE_2D, texturesLocal[currFrame]);
 
     // Map the texture onto a square polygon.
+    glPushMatrix();
     glBegin(GL_POLYGON);
     glTexCoord2f(0.0, 0.0);
     glVertex3f(-10.0, -10.0, 0.0);
@@ -271,11 +263,10 @@ void drawLitShapes() {
     glTexCoord2f(0.0, 1.0);
     glVertex3f(-10.0, 10.0, 0.0);
     glEnd();
-
-
+    glPopMatrix();
     glDisable(GL_TEXTURE_2D);
 
-    // glDisable(headLamp);
+    glutSwapBuffers();
 }
 
 void drawUnlitShapes() {
@@ -292,9 +283,9 @@ void drawUnlitShapes() {
         glPopMatrix();
     }
 
-    // if (bufferPeeking) {
-    //     drawHiddenBuffer();
-    // }
+    if (bufferPeeking) {
+        drawHiddenBuffer();
+    }
 
 
     // testConeArot();
@@ -324,14 +315,14 @@ void drawWindow() {
     }
     setupRight();
 
-    glDisable(GL_LIGHTING);
-
     drawUnlitShapes();
+
 
     drawLitShapes();
     // glDisable(GL_LIGHTING);
 
 
+    glDisable(GL_LIGHTING);
 
     // glDisable(GL_BLEND);
 
@@ -406,30 +397,10 @@ void setupLights() {
     headLamp.enable();
 }
 
-void setupTextures() {
-    glGenTextures(2, texture);
-    loadTexture("res/textures/hat.bmp", 0);
 
-
-
-
-    // Turn on OpenGL texturing.
-    // glEnable(GL_TEXTURE_2D);
-    // Specify how texture values combine with current surface color values.
-    // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-
-}
 
 void setup() {
     winner = useTimeToSeedRandomToSetWinner();
-    roomBnlF[0] = 2 * hallBnlF[0];
-    roomBnlF[1] = hallBnlF[1];
-    roomBnlF[2] = 3.0f * hallBnlF[2];
-
-    roomtfrF[0] = 2 * halltfrF[0];
-    roomtfrF[1] = halltfrF[1];
-    roomtfrF[2] = 3 * halltfrF[2];
     // Light property vectors.
 
 
@@ -791,17 +762,14 @@ void specialKeyboard(int key, int x, int y) {
             break;
 
         case GLUT_KEY_F8:
-            if (modifiers & GLUT_ACTIVE_ALT) {
-                cardRotState = cardRotState == CARD_ROT_REL ? CARD_ROT_UNDO : CARD_ROT_REL;
-                glout << "Interactive Card: " << (cardRotState == CARD_ROT_REL ? "Enabled" : "Disabled") << '\n';
+            if(animClip){
+                animClip = false;
+                glout << "Animation Clip: Off\n";
             } else {
-                if (cardRotState == CARD_ROT_NONE) {
-                    cardRotState = CARD_ROT_NOW;
-                } else if (cardRotState == CARD_ROT_NOW || CARD_ROT_COMPLETE) {
-                    cardRotState = CARD_ROT_UNDO;
-                    glout << "CardUndo" << std::endl;
-                }
+                animClip = true;
+                glout << "Animation Clip: On\n";
             }
+
             break;
         case GLUT_KEY_F9: //call Camera::saveToFile(std::ofstream& file)
             //open file pointer for writing:
@@ -866,6 +834,8 @@ void specialKeyboard(int key, int x, int y) {
 #endif
 
 #ifndef FOLDING_REGION_ANIMATION
+
+
 //section ANIMATION
 float cardDistFun() {
     cardDist = cam.pos.dist(Coord(18.6000004, 1.84333336, 0.25));
@@ -922,19 +892,28 @@ void peekHiddenBuffer() {
     }
 }
 
+//idle animation
+void idleAnimVid() {
+    currFrame = (currFrame + 1) % numAnimFrames;
+    debugMap[60 - 25] = "Frame: " + std::to_string(currFrame);
+}
+
+
 void animate(int value) {
     // add value to the debugMap
-    debugMap[60 - 5] = "MysteryValue: " + std::to_string(value);
+    // debugMap[60 - 5] = "MysteryValue: " + std::to_string(value);
+    //
+    // doorAnimate();
+    // if (cardRotState == CARD_ROT_NOW || CARD_ROT_UNDO) {
+    //     cardAnimate();
+    // }
 
-    doorAnimate();
-    if (cardRotState == CARD_ROT_NOW || CARD_ROT_UNDO) {
-        cardAnimate();
+    // if (bufferPeeking) {
+    //     peekHiddenBuffer();
+    // }
+    if(animClip){
+        idleAnimVid();
     }
-
-    if (bufferPeeking) {
-        peekHiddenBuffer();
-    }
-
 
     glutTimerFunc(5, animate, 1);
     glutPostRedisplay();
