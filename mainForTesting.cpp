@@ -52,7 +52,7 @@ struct BitMapFile {
 
 // Routine to read a bitmap file.
 // Works only for uncompressed bmp files of 24-bit color.
-BitMapFile *getBMPData(string filename) {
+BitMapFile *getBMPData_24(string filename) {
     BitMapFile *bmp = new BitMapFile;
     unsigned int size, offset, headerSize;
 
@@ -96,7 +96,7 @@ void loadExternalTextures() {
     BitMapFile *image[1];
 
     // Load the texture.
-    image[0] = getBMPData("res/textures/ba_00303.bmp");
+    image[0] = getBMPData_24("res/textures/ba_00303.bmp");
 
     // Activate texture index texture[0].
     glBindTexture(GL_TEXTURE_2D, texture[0]);

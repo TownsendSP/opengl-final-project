@@ -85,3 +85,7 @@ void drawTexEgs() {
 
 
 
+// void drawCampfire(int numLogs, int numFlames, int numRocks) {
+//
+// }
+//
