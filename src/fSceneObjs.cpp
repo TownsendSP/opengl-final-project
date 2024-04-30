@@ -24,6 +24,7 @@
 
 #include "Coord.h"
 #include "modelLoader.h"
+#include "testingFunctions.h"
 
 
 void testTexturedPlane(Coord locPostTrans, int properTexture) {
@@ -52,11 +53,10 @@ void drawTexEgs() {
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
     // glDisable(GL_LIGHTING);
-    int hatTexIdx = textureMap["hat.bmp"];
-    int starTexIdx = textureMap["star.bmp"];
+
     // std::map<std::string, int > it = textureMap;
 
-    glBindTexture(GL_TEXTURE_2D, texture[hatTexIdx]);
+    glBindTexture(GL_TEXTURE_2D, texture[textureMap["hat"]]);
     glPushMatrix();
     glTranslatef(10, 2, 10);
     drawHatUV();
@@ -69,7 +69,16 @@ void drawTexEgs() {
     // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     unsigned int* texturesLocal = texture;
     int thing = currFrame;
-    testTexturedPlane(Coord(5, 5, -5), textureMap["star.bmp"]);
-    testTexturedPlane(Coord(5, 5, -5), textureMap["ba.bmp"]);
+    int startext = textureMap["star"];
+    int hatTx = textureMap["hat"];
+    int baTest = textureMap["ba"];
+
+    debugMap[60-1] = "str: " + std::to_string(startext) + " hat: " + std::to_string(hatTx) + " ba: " + std::to_string(baTest);
+
+
+    testTexturedPlane(Coord(30, 10, -5), startext);
+    testTexturedPlane(Coord(0, 10, -5), hatTx);
+    testTexturedPlane(Coord(0, 30, -5), currFrame);
+    testTexturedPlane(Coord(-30, 10, -5), baTest);
     glDisable(GL_TEXTURE_2D);
 }

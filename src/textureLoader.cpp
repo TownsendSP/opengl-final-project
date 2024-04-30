@@ -14,11 +14,18 @@
 #include <filesystem>
 
 BitMapFile *getBMPData(std::string filename) {
+    std::ifstream infile(filename.c_str(), std::ios::binary);
+
+    // Check if the file was opened successfully
+    if (!infile) {
+        std::cout << "Texture " << filename << " not found, exiting." << std::endl;
+        exit(1);
+    }
+
     BitMapFile *bmp = new BitMapFile;
     unsigned int size, offset, headerSize;
 
     // Read input file name.
-    std::ifstream infile(filename.c_str(), std::ios::binary);
 
     // Get the starting point of the image data.
     infile.seekg(10);
@@ -128,7 +135,7 @@ void setupTextures() {
     std::cout << "Loaded " << numtexts << " textures" << std::endl;
 
     // loadTexture("res/textures/hat.bmp", numAnimFrames);
-    loadTexture("res/textures/minsize/hat.bmp", numAnimFrames);
+    loadTexture("res/textures/hat.bmp", numAnimFrames);
     loadTexture("res/textures/star.bmp", numAnimFrames + 1);
     loadTexture("res/textures/ba.bmp", numAnimFrames + 2);
 
