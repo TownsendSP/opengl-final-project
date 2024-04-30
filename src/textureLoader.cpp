@@ -12,7 +12,7 @@
 #include <utility>
 #include <algorithm>
 #include <filesystem>
-
+bool shouldbreak = false;
 //not bothering to create 24/32 bit depth animations, if I need any transparent animations i'll just load an 8-bit mask
 int loadAnim(const std::string &directoryForFrames) {
     std::list<std::string> filenames;
@@ -66,10 +66,15 @@ BitMapFile *getBMPData_24(std::string filename) {
     // Get the header size of the bitmap.
     infile.read((char *) &headerSize, 4);
 
+    int off = offset;
+    int headr = headerSize;
     // Get width and height values in the bitmap header.
-    infile.seekg(18);
+    int xOff = 18;
+    infile.seekg(xOff);
     infile.read((char *) &bmp->sizeX, 4);
+    int sizex = bmp->sizeX;
     infile.read((char *) &bmp->sizeY, 4);
+    int sizey = bmp->sizeY;
 
     // Allocate buffer for the image.
     size = bmp->sizeX * bmp->sizeY * 24;
@@ -78,21 +83,31 @@ BitMapFile *getBMPData_24(std::string filename) {
     // Read bitmap data.
     infile.seekg(offset);
     infile.read((char *) bmp->data, size);
+    // for debugging, print the entire file as bytes
 
     // Reverse color from bgr to rgb.
     int temp;
+
     for (int i = 0; i < size; i += 3) {
         temp = bmp->data[i];
         bmp->data[i] = bmp->data[i + 2];
         bmp->data[i + 2] = temp;
     }
-
+    int a = 3;
     return bmp;
 }
 
+
 void loadTexture_24(std::string filename, int id) {
+
     std::string pathname = filename;
     std::string name = extractFileName(filename);
+
+    if(id == 357 || id == 358)
+        shouldbreak = true;
+    else
+        shouldbreak = false;
+
 
     BitMapFile *image[1];
 
