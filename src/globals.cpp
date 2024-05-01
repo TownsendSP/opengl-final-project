@@ -419,14 +419,16 @@ bool selectLockingEnabled = false;
 
 
 
-unsigned int texture[NUMTEXTURES];
+unsigned int texture_24[NUMTEXTURES_24];
+unsigned int texture_32[NUMTEXTURES_32];
 
 
 
 unsigned int numAnimFrames;
 unsigned int currFrame;
 
-std::map<std::string, int> textureMap;
+std::map<std::string, int> textureMap_24;
+std::map<std::string, int> textureMap_32;
 
 
 

@@ -187,7 +187,7 @@ Material castIronMat = Material( // nearly black, metallic
     ColorData(0.1f, 0.1f, 0.1f, 1.0f),
     10.0f);
 
-//shiny dark brown texture for table
+//shiny dark brown texture_24 for table
 Material tableMat = Material(
     ColorData(0.2f, 0.2f, 0.2f, 1.0f),
     ColorData(0.1f,0.1f,0.1f, 1.0f),
