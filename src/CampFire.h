@@ -10,11 +10,14 @@
 class Flame {
 public:
     Flame() = default;
+    Coord relLoc;
     float controlPoints[15][10][3];
     float targetY;
     float currY;
     float targetX;
     float currX;
+    Coord scale;
+    int age;
 
 
     // Control points for a real bicubic spline surface.
@@ -44,27 +47,57 @@ public:
 
 
 
-    Coord bottomLoc;
+
     //GLUnurbsObj *nurbsObject;
-    int rowCount;
-    int columnCount;
     // static float controlPoints[8][5][3];
 
 
     void draw();
 
+    float taperX(float z);
+
+    float funcFlameY(float z);
+
+    float shiftX(float z);
+
     void resetControlPoints();
 
     void animate();
 
-    Flame(Coord bottomLoca);
+    Flame(Coord bottomLoca, Coord scalea);
+
+
 };
 
 
 
 
-class campfireAttempt {
+class Campfire {
+public:
+    bool exists = true;
+    std::vector<Flame> flames;
+    int numFlames;
+    float radius;
+    float bottomRad;
 
+
+    Campfire(int numFlames, int bottomRad);
+
+    void genFlame(float bottomRad);
+
+    Campfire(int numFlames, float bottomRad);
+
+    void fetchFlame(int i);
+
+    void draw();
+    void animate();
+
+
+
+
+
+
+    Campfire() = default;
 };
 
 

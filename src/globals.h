@@ -318,6 +318,8 @@ extern std::map<std::string, int> textureMap_32;
 extern unsigned int numAnimFrames;
 extern unsigned int currFrame;
 
+extern bool showInfoViewport;
+
 
 
 #endif //GLOBALS_H

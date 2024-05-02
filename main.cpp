@@ -35,7 +35,7 @@
 #include "src/textureLoader.h"
 #include "src/fSceneObjs.h"
 
-#include "src/campfireAttempt.h"
+#include "src/CampFire.h"
 
 
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
@@ -70,7 +70,7 @@ bool started = false;
 
 float sensitivity = 0.01f; // camera movement and mouse sensitivity
 float blindAnimSpeed = 0.05;
-bool showInfoViewport = true;
+
 bool drawDebugPoints = false;
 bool focusPoint = false;
 bool drawAllPoints = false;
@@ -882,6 +882,7 @@ void idleAnimVid() {
 
 void flameAnimFn(int value) {
     testflame.animate();
+    testflame.resetControlPoints();
 
     glutTimerFunc(1000 / 60, flameAnimFn, 1); // 60 times per second
     glutPostRedisplay();

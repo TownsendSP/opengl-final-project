@@ -434,3 +434,4 @@ std::map<std::string, int> textureMap_32;
 
 
 
+bool showInfoViewport = true;

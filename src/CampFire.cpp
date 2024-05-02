@@ -2,7 +2,7 @@
 // Created by tgsp on 4/29/2024.
 //
 
-#include "campfireAttempt.h"
+#include "CampFire.h"
 #include "textureLoader.h"
 #include "lighting.h"
 
@@ -14,15 +14,16 @@
 #include <map>
 #include <string>
 
+#include "../../../Documents/CIS_425/tgsouthaHW4/src/things.h"
+
 
 float Flame::texturePoints[2][2][2] =
 {
-    {{0.0, 0.0}, {0.0, 5.0}},
-    {{5.0, 0.0}, {5.0, 5.0}}
+    {{0.0, 0.0}, {0.0, 1.0}},
+    {{1.0, 0.0}, {1.0, 1.0}}
 };
-
 float Flame::uknots[19] =
-    {
+{
     0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
     7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 12.0, 12.0, 12.0
 };
@@ -70,6 +71,22 @@ void Flame::draw() {
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // Set alpha to 0.5
 
     glPopMatrix();
+
+    if(showInfoViewport) {
+        glPushMatrix();
+        glColor4f(0.0f, 1.0f, 0.0f, 1.0f); // Set alpha to 0.5
+        glBegin(GL_POINTS);
+        int i = 0;
+        int j = 0;
+        for (i = 0; i < 15; i++) {
+            for (j = 0; j < 10; j++) {
+                glVertex3fv(controlPoints[i][j]);
+            }
+        }
+        glEnd();
+        glPopMatrix();
+
+    }
 
 
 
@@ -141,43 +158,50 @@ void Flame::draw() {
 //     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_UNSIGNED_BYTE, chessboard);
 // }
 
-float taperX(float z) {
-    return -0.571428571429 * z * z + 15;
+float Flame::taperX(float z) {
+    return (-0.571428571429 * z * z) + 15;
 }
 
-float funcFlameY(float z) {
-    return z * z; //0.571428571429 *
+float Flame::funcFlameY(float z) {
+    return (currX/2) * 0.571428571429 * z * z; //0.571428571429 *
 }
 
-float shiftX(float z) {
-    return 0.571428571429 * z * z;
+float Flame::shiftX(float z) {
+    return (currX/2) * 0.571428571429 * z * z;
 }
 
 
-void Flame::updatePts(void){ // sets the x of all
+void Flame::resetControlPoints(void){ // sets the x of all
     int i, j;
-    for (i = 0; i < 15; i++)
+    for (i = 0; i < 15; i++) {
         for (j = 0; j < 10; j++) {
-            controlPoints[i][j][0] = -2.5 + taperX(j) * 0.5;
-            controlPoints[i][j][1] = 0.0;
+            //og -2.5 + j * 0.5;
+            if(j>4) {
+                controlPoints[i][j][0] = -2.5 + taperX(j)/10 * 0.5 + shiftX(i)/10;
+            } else {
+                controlPoints[i][j][0] = -2.5 + taperX(j)/10 * 0.5 + shiftX(i)/10;
+            }
+            // controlPoints[i][j][0] = j * 0.5 + taperX(i);
+            controlPoints[i][j][1] = funcFlameY(i)/15;
+            // controlPoints[i][j][1] = 0.0;
             controlPoints[i][j][2] = 6.0 - i;
         }
-    rowCount = columnCount = 0;
+    }
 }
 
 
 // Reset control points.
-void Flame::resetControlPoints(void) {
-    int i, j;
-
-    for (i = 0; i < 15; i++)
-        for (j = 0; j < 10; j++) {
-            controlPoints[i][j][0] = -2.5 + taperX(j) * 0.5;
-            controlPoints[i][j][1] = funcFlameY(j);
-            controlPoints[i][j][2] = 6.0 - i;
-        }
-    rowCount = columnCount = 0;
-}
+// void Flame::resetControlPoints(void) {
+//     int i, j;
+//
+//     for (i = 0; i < 15; i++)
+//         for (j = 0; j < 10; j++) {
+//             controlPoints[i][j][0] = -2.5 + taperX(j) * 0.5 + shiftX(i);
+//             controlPoints[i][j][1] = funcFlameY(j);
+//             controlPoints[i][j][2] = 6.0 - i;
+//         }
+//     rowCount = columnCount = 0;
+// }
 
 void Flame::animate() {
     //move currY towards targetY
@@ -192,10 +216,16 @@ void Flame::animate() {
     if (fabs(targetX - currX) < 0.1) {
         targetX = srnd(-1, 1);
     }
+
+    age += 1;
 }
 
-Flame:: Flame(Coord bottomLoca) {
-    this->bottomLoc = bottomLoca;
+
+
+Flame::Flame(Coord bottomLoca, Coord scalea) {
+    this->relLoc = bottomLoca;
+    this -> scale = scalea;
+    this -> age = 0;
     this->nurbsObject = gluNewNurbsRenderer();
     //instantiate the control points:
 
@@ -206,10 +236,78 @@ Flame:: Flame(Coord bottomLoca) {
     resetControlPoints(); // Fill control points array for real spline surface.
     this -> targetY = srnd(-1, 1);
     this -> targetX = srnd(-1, 1);
-    this -> currY = 0;
+    this -> currY = 0.0f;
     this -> currX = 0.0f;
     // createChessboard();
     // loadProceduralTextures();
 
     //    glEnable(GL_AUTO_NORMAL); // Enable automatic normal calculation.
 }
+
+
+void Campfire::genFlame(float bottomRad) {
+    float sqrt1 = sqrt(srnd(-bottomRad, bottomRad) * srnd(-bottomRad, bottomRad) + srnd(-bottomRad, bottomRad) * srnd(-bottomRad, bottomRad));
+    flames.push_back(Flame(Coord(srnd(-bottomRad, bottomRad), 0.1, srnd(-bottomRad, bottomRad)),
+                           Coord(sqrt1,sqrt1,sqrt1)));
+}
+
+Campfire::Campfire(int numFlames, float bottomRad) {
+    // add a numFlames to the vector
+    this -> bottomRad = bottomRad;
+    for ( int i = 0; i < numFlames; i++) {
+    genFlame(bottomRad);
+    }
+}
+
+void makeLog(float rad, float len) {
+    tableMat.apply();
+    glPushMatrix();
+    GLUquadricObj *quadric = gluNewQuadric();
+    gluCylinder(quadric, rad/0.7, rad, len, 20, 10);
+    gluDeleteQuadric(quadric);
+    glPopMatrix();
+}
+
+
+void Campfire::fetchFlame(int i) {
+    glPushMatrix();
+    glRotatef(-90, 1, 0, 0);
+    flames[i].draw();
+    glPopMatrix();
+}
+
+void Campfire::draw() {
+
+    for (int i = 0; i < flames.size(); i++) {
+        glPushMatrix();
+        glTranslatefv(flames[i].relLoc);
+        glScalefv(flames[i].scale);
+        fetchFlame(i);
+        glPopMatrix();
+    }
+
+    // draw 10 cylinders, each rotated 72 degrees
+    for (int i = 0; i < 10; i++) {
+        glPushMatrix();
+        glRotatef(72 * i, 0, 1, 0);
+        glTranslatef(0, 0, 0.5);
+        makeLog(0.1, bottomRad);
+        glPopMatrix();
+    }
+}
+
+void Campfire::animate() {
+    // just call animate on each of the flames
+    for (int i = 0; i < flames.size(); i++) {
+        if(flames[i].age * srnd(0, 1) > 1000) {
+            flames.erase(flames.begin() + i);
+            genFlame(bottomRad);
+        } else {
+            flames[i].animate();
+        }
+    }
+}
+
+
+
+
