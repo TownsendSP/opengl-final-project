@@ -258,10 +258,12 @@ Light brightWhite = Light(
 
 Light brightRed = Light(
     Light::LIGHT4,
-    ColorData(Coord(0, 10, 0), 1.0),
+    ColorData(Coord(0, 0, 0), 1.0),
     ColorData(0.2f, 0.05f, 0.05f, 1),
     ColorData(1.0f, 0.2f, 0.2f, 1.0f),
     ColorData(1.0f, 0.2f, 0.2f, 1.0f));
+
+
 //
 // Light brightGreen = Light(
 //     Light::LIGHT5,
@@ -305,11 +307,9 @@ Spotlight headLamp = Spotlight(
 
 
 
-
-
 Light sunLight = Light( //directional sunlight, high in the sky
     Light::LIGHT2,
-    ColorData(1.0f, 1.0f, 1.0f, 0.0f),
-    ColorData(0.2f, 0.2f, 0.2f, 1),
-    ColorData(1.0f, 1.0f, 1.0f, 1.0f),
-    ColorData(1.0f, 1.0f, 1.0f, 1.0f));
+    ColorData(1.0f, 1.0f, 1.0f, 0.0f), //pos
+    ColorData(0.2f, 0.2f, 0.2f, 1), //amb
+    ColorData(1.0f, 1.0f, 1.0f, 1.0f), //diff
+    ColorData(1.0f, 1.0f, 1.0f, 1.0f)); //spec

@@ -117,6 +117,7 @@ extern Material shinyBlue;
 extern Light roomLight;
 extern Light hallLight;
 extern Light sunLight;
+extern Light brightRed;
 extern Spotlight headLamp;
 // extern Spotlight redLight;
 // extern Spotlight blueLight;
