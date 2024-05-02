@@ -35,6 +35,8 @@
 #include "src/textureLoader.h"
 #include "src/fSceneObjs.h"
 
+#include "src/campfireAttempt.h"
+
 
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
 
@@ -87,6 +89,9 @@ float rVPColor[] = {0.2, 0.2, 0.2, 1.0};
 ColorData rVPColorData = ColorData(0.2, 0.2, 0.2, 1.0);
 ColorData solarizedBG = ColorData(0.02745, 0.21176, 0.25882, 1.0);
 ColorData solarizedText = ColorData(0.71373, 0.58039, 0.58824, 1.0);
+
+//flame
+Flame testflame;
 
 
 DebugLevel defaultDebug = WEAK;
@@ -232,6 +237,7 @@ void drawLitShapes() {
     // glScalef(2, 2, 2);
     // drawModel(crystalVertices, crystalIndices, 2900, 4428);
     // glPopMatrix();
+    testflame.draw();
     drawTexEgs();
 
     glutSwapBuffers();
@@ -324,7 +330,7 @@ void setupObjects() {
     cam = Camera(Coord(1, 2, 0), Coord(2, 2, 0), Coord(0, 1, 0));
     debugXes.emplace_back(Coord(0, 0, 0), 100, 2);
 
-    windowBlinds = Blinds(2, 2, 0.1, 30);
+    // windowBlinds = Blinds(2, 2, 0.1, 30);
 
 
     // roomLight = Light(
@@ -335,7 +341,11 @@ void setupObjects() {
 
     //giving them access to the debugging info map
     cam.setDebugStringAdd(&debugMap);
-    windowBlinds.setDebugStringAdd(&debugMap);
+    // windowBlinds.setDebugStringAdd(&debugMap);
+
+    //setup the flame
+    testflame = Flame(Coord(0, 0, 0));
+
 
     //setup lvp class:
 }
@@ -363,6 +373,8 @@ void setupLights() {
     sunLight.enable();
     glEnable(GL_LIGHT_MODEL_AMBIENT);
     headLamp.enable();
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
 }
 
 
@@ -866,22 +878,24 @@ void idleAnimVid() {
     debugMap[60 - 25] = "Frame: " + std::to_string(currFrame);
 }
 
+#define ANIMSPEED 24
 
-void animate(int value) {
-    // add value to the debugMap
-    // debugMap[60 - 5] = "MysteryValue: " + std::to_string(value);
-    //
-    // doorAnimate();
-    // if (cardRotState == CARD_ROT_NOW || CARD_ROT_UNDO) {
-    //     cardAnimate();
-    // }
+void flameAnimFn(int value) {
+    testflame.animate();
 
-    // if (bufferPeeking) {
-    //     peekHiddenBuffer();
-    // }
+    glutTimerFunc(1000 / 60, flameAnimFn, 1); // 60 times per second
+    glutPostRedisplay();
+}
+
+void animateClip(int value) {
     if(animClip){
         idleAnimVid();
     }
+    glutTimerFunc(1000 / ANIMSPEED, animateClip, 1); // ANIMSPEED times per second
+    glutPostRedisplay();
+}
+
+void animate(int value) {
 
     glutTimerFunc(5, animate, 1);
     glutPostRedisplay();
@@ -904,7 +918,10 @@ int main(int argc, char **argv) {
     glutSpecialFunc(specialKeyboard);
     glutMouseFunc(mouseControl);
 
+    glutTimerFunc(1000 / 60, flameAnimFn, 1);
     glutTimerFunc(5, animate, 1);
+    glutTimerFunc(1000 / ANIMSPEED, animateClip, 1);
+
 
     for (const std::string &i: instructionVec) {
         std::cout << i << '\n';

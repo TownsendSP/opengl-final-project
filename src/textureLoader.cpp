@@ -140,13 +140,15 @@ void loadTexture_24(std::string filename, int id) {
 void setupTextures_24() {
     glGenTextures(NUMTEXTURES_24, texture_24);
 
-    int numtexts = loadAnim("res/textures/minsize/");
+    int numtexts = loadAnim("res/textures/animated/");
     std::cout << "Loaded " << numtexts << " textures" << std::endl;
 
     // loadTexture_24("res/textures/hat.bmp", numAnimFrames);
     loadTexture_24("res/textures/hat.bmp", numAnimFrames);
     loadTexture_24("res/textures/star.bmp", numAnimFrames + 1);
-    loadTexture_24("res/textures/ba.bmp", numAnimFrames + 2);
+    // loadTexture_24("res/textures/ba.bmp", numAnimFrames + 2);
+    loadTexture_24("res/textures/flame24.bmp", numAnimFrames + 3);
+    loadTexture_24("res/textures/flame24.bmp", 0);
 }
 #endif
 
@@ -205,7 +207,7 @@ void loadTexture_32(std::string filename, int id) {
 
     // Specify an image as the texture_32 to be bound with the currently active texture_32 index.
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image[0]->sizeX, image[0]->sizeY, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, image[0]->data); // Change here for 32-bit
+                 GL_BGRA, GL_UNSIGNED_BYTE, image[0]->data); // Change here for 32-bit
 
     std::cout << "Loaded texture_32: " << pathname << " as " << name << " with index: " << id << " - Dimensions " <<
             image[0]->sizeX << "x" << image[0]->sizeY << std::endl;

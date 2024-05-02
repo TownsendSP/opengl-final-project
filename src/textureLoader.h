@@ -25,8 +25,11 @@ struct BitMapFile {
 };
 
 BitMapFile *getBMPData_24(std::string filename);
+BitMapFile *getBMPData_32(std::string filename);
 
 void loadTexture_24(std::string filename, int id);
+
+void loadTexture_32(std::string filename, int id);
 
 //returns: number of frames
 int loadAnim(const std::string &directoryForFrames);

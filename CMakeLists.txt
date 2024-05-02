@@ -7,13 +7,14 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(CMAKE_PREFIX_PATH "C:/Program/NVIDIA Corporation/Cg")
 endif()
 
-set(MAIN_BINARY_NAME "OpenGLWindow")
+set(MAIN_BINARY_NAME "tgsouthaFinalProject")
 set(TESTING_BINARY_NAME "testing")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLU REQUIRED)
 add_subdirectory("/home/tgsp/Documents/CIS_425/Examples/" "/home/tgsp/Documents/CIS_425/Examples/cmake-build-debug")
+add_subdirectory("/home/tgsp/Documents/CIS_425/tgsouthaHW4/" "/home/tgsp/Documents/CIS_425/tgsouthaHW4/cmake-build-visual-studio")
 include_directories(${OPENGL_INCLUDE_DIR}   ${GLUT_INCLUDE_DIRS})
 
 add_executable(${MAIN_BINARY_NAME} main.cpp

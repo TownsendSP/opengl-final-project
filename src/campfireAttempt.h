@@ -6,54 +6,62 @@
 #define CAMPFIREATTEMPT_H
 #include "Coord.h"
 
+
 class Flame {
-private:
+public:
+    Flame() = default;
+    float controlPoints[15][10][3];
+    float targetY;
+    float currY;
+    float targetX;
+    float currX;
+
+
     // Control points for a real bicubic spline surface.
-    static float controlPoints[15][10][3];
 
     // Control points for a spline surface in texture space.
-    static float texturePoints[2][2][2] =
-    {
-        {{0.0, 0.0}, {0.0, 5.0}},
-        {{5.0, 0.0}, {5.0, 5.0}}
-    };
+    static float texturePoints[2][2][2];
 
     // Standard knot vector along the u-parameter for the real spline surface.
-    static float uknots[19] =
-    {
-        0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
-        7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 12.0, 12.0, 12.0
-    };
+    static float uknots[19];
 
     // Standard knot vector along the v-parameter for the real spline surface.
-    static float vknots[14] =
-    {
-        0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
-        7.0, 7.0, 7.0, 7.0
-    };
+    static float vknots[14];
 
     // Standard knot vector along the u-parameter for the spline surface in texture space.
-    static float uTextureknots[4] =
-            {0.0, 0.0, 12.0, 12.0};
+    static float uTextureknots[4];
 
     // Standard knot vector along the v-parameter for the spline surface in texture space.
-    static float vTextureknots[4] =
-            {0.0, 0.0, 7.0, 7.0};
+    static float vTextureknots[4];
+
     // End globals.
-public:
+
+
+    static unsigned int texture[1]; // bicubicSplineSurfaceLitTextured.cpp
+    static unsigned char chessboard[64][64][3]; // Storage for chessboard image.
+
+    GLUnurbsObj *nurbsObject; // Pointer to NURBS object.
+
+
+
     Coord bottomLoc;
-    GLUnurbsObj *nurbsObject;
+    //GLUnurbsObj *nurbsObject;
     int rowCount;
     int columnCount;
-    static float controlPoints[8][5][3];
+    // static float controlPoints[8][5][3];
 
 
     void draw();
 
     void resetControlPoints();
 
+    void animate();
+
     Flame(Coord bottomLoca);
 };
+
+
+
 
 class campfireAttempt {
 
