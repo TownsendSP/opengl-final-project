@@ -13,8 +13,7 @@ set(TESTING_BINARY_NAME "testing")
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLU REQUIRED)
-add_subdirectory("/home/tgsp/Documents/CIS_425/Examples/" "/home/tgsp/Documents/CIS_425/Examples/cmake-build-debug")
-add_subdirectory("/home/tgsp/Documents/CIS_425/tgsouthaHW4/" "/home/tgsp/Documents/CIS_425/tgsouthaHW4/cmake-build-visual-studio")
+
 include_directories(${OPENGL_INCLUDE_DIR}   ${GLUT_INCLUDE_DIRS})
 
 add_executable(${MAIN_BINARY_NAME} main.cpp
@@ -32,8 +31,8 @@ add_executable(${MAIN_BINARY_NAME} main.cpp
         src/LeftVP.cpp
         src/LeftVP.h
         src/Scenedraw.cpp
-        src/campfireAttempt.cpp
-        src/campfireAttempt.h
+        src/CampFire.cpp
+        src/CampFire.h
         src/fSceneObjs.cpp
         src/fSceneObjs.h
         src/globals.cpp
@@ -66,3 +65,5 @@ add_executable(objtoh
 )
 
 
+#add_subdirectory("/home/tgsp/Documents/CIS_425/Examples/" "/home/tgsp/Documents/CIS_425/Examples/cmake-build-debug")
+#add_subdirectory("/home/tgsp/Documents/CIS_425/tgsouthaHW4/" "/home/tgsp/Documents/CIS_425/tgsouthaHW4/cmake-build-visual-studio")

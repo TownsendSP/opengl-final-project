@@ -60,7 +60,11 @@ void processConsoleMsgs() {
 }
 
 void drawLeft() {
-    glClearColor(rVPColorData.R, rVPColorData.G, rVPColorData.B, rVPColorData.A);
+    if(showInfoViewport) {
+        glClearColor(rVPColorData.R, rVPColorData.G, rVPColorData.B, rVPColorData.A);
+    }else {
+        glClearColor(135.0f/255.0f, 206.0f/255.0f, 235.0f/255.0f, 1.0f);
+    }
 
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);

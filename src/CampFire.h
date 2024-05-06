@@ -80,10 +80,7 @@ public:
     float radius;
     float bottomRad;
 
-
-    Campfire(int numFlames, int bottomRad);
-
-    void genFlame(float bottomRad);
+    Flame genFlame(float bottomRad);
 
     Campfire(int numFlames, float bottomRad);
 

@@ -6,8 +6,8 @@
 #define SCENEDRAW_H
 #include "lighting.h"
 
-void drawHall();
-void drawHiddenBuffer();
+
+void drawHiddenBuffer(Coord crystalPos);
 
 
 #endif //SCENEDRAW_H

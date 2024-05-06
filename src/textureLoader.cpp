@@ -146,9 +146,9 @@ void setupTextures_24() {
     // loadTexture_24("res/textures/hat.bmp", numAnimFrames);
     loadTexture_24("res/textures/hat.bmp", numAnimFrames);
     loadTexture_24("res/textures/star.bmp", numAnimFrames + 1);
-    // loadTexture_24("res/textures/ba.bmp", numAnimFrames + 2);
+    loadTexture_24("res/textures/grass.bmp", numAnimFrames + 2);
     loadTexture_24("res/textures/flame24.bmp", numAnimFrames + 3);
-    loadTexture_24("res/textures/flame24.bmp", 0);
+    // loadTexture_24("res/textures/flame24.bmp", 0);
 }
 #endif
 
@@ -224,5 +224,5 @@ void setupTextures_32() {
 
 void setupTextures() {
     setupTextures_24();
-    setupTextures_32();
+    // setupTextures_32();
 }

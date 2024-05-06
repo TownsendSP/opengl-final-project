@@ -91,8 +91,8 @@ ColorData solarizedBG = ColorData(0.02745, 0.21176, 0.25882, 1.0);
 ColorData solarizedText = ColorData(0.71373, 0.58039, 0.58824, 1.0);
 
 //flame
-Flame testflame;
-
+// Flame testflame;
+Campfire testcampfire;
 
 DebugLevel defaultDebug = WEAK;
 bool detachSpotlight = false;
@@ -109,13 +109,14 @@ Light fakeSun;
 
 int frame = 0;
 auto prevTime = std::chrono::high_resolution_clock::now();
-
+int fps;
 void calculateFPS() {
     frame++;
     auto currentTime = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(currentTime - prevTime);
     if (duration.count() >= 1) {
         debugMap[60 - 3] = " FPS: " + std::to_string(frame);
+        fps = frame;
         frame = 0;
         prevTime = currentTime;
     }
@@ -124,12 +125,58 @@ void calculateFPS() {
 
 #ifndef FOLDING_REGION_Draw
 
+
+Coord crystalPos;
+bool crystalHas = false;
+
+void crystalPlace() {
+    //randomize crystalPos
+    crystalPos = Coord(srnd(-20, 20), 4, srnd(-20, 20));
+}
+
+void crystalFlameInteraction() {
+    if(crystalHas) {
+        flamenoanim = false;
+        crystalHas = false;
+        makeflames = true;
+    }
+    else {
+        flamenoanim = true;
+        makeflames = !flamenoanim;
+    }
+
+
+}
+
 void getID(int x, int y) {
     unsigned char pixel[3];
     glReadPixels(x, y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixel);
     //printed only for demonstration
     glout << "Pixel at (" << x << ", " << y << "): R: "
             << (int) pixel[0] << " G: " << (int) pixel[1] << " B: " << (int) pixel[2] << std::endl;
+
+    int pixeli[3] = {(int) pixel[0], (int) pixel[1], (int) pixel[2]};
+    int pixela = pixeli[0] << 16 | pixeli[1] << 8 | pixeli[2];
+    switch (pixela) {
+
+        case (255 << 16) | (0 << 8) | 0:
+            crystalFlameInteraction();
+
+        break;
+        case(0 << 16) | (255 << 8) | 0:
+            crystalHas = !crystalHas;
+
+        break;
+        case (0 << 16) | (0 << 8) | 255:
+            animClip = !animClip;
+
+        break;
+        case (255 << 16) | (0 << 8) | 255:
+
+        break;
+        default:
+            return;
+    }
 }
 
 Coord rotToVec(float rotRadX, float rotRadY) {
@@ -176,7 +223,7 @@ void setupRight() {
     headLamp.setup();
 
     cam.lookAt();
-    // glClearColor(rVPColorData.R, rVPColorData.G, rVPColorData.B, rVPColorData.A);
+    glClearColor(rVPColorData.R, rVPColorData.G, rVPColorData.B, rVPColorData.A);
 }
 
 
@@ -231,34 +278,40 @@ void drawLitShapes() {
     // // glShadeModel(GL_FLAT);
     // //verts: 14805
     // //idxs: 70848
-    // castIronMat.apply();
-    // glPushMatrix();
-    // glTranslatef(-10, 2, -10);
-    // glScalef(2, 2, 2);
-    // drawModel(crystalVertices, crystalIndices, 2900, 4428);
-    // glPopMatrix();
-    testflame.draw();
+    shinyBlue.apply();
+    glPushMatrix();
+    glTranslatefv(crystalPos);
+    glScalef(2, 2, 2);
+    drawModel(crystalVertices, crystalIndices, 2900, 4428);
+    glPopMatrix();
+    //std::cout << "Drawing" << std::endl;
+    testcampfire.draw();
+
+
     drawTexEgs();
+
 
     glutSwapBuffers();
 }
 
 void drawUnlitShapes() {
     glDisable(GL_LIGHTING);
-    if (defaultDebug != NONE) {
-        glPushMatrix();
-        drawXZxGridlines(50);
-        glPopMatrix();
-        glPushMatrix();
-        for (Debug3Dx debug_x: debugXes) {
-            debug_x.draw();
+    if(showInfoViewport){
+        if (defaultDebug != NONE) {
+            glPushMatrix();
+            drawXZxGridlines(50);
+            glPopMatrix();
+            glPushMatrix();
+            for (Debug3Dx debug_x: debugXes) {
+                debug_x.draw();
+            }
+
+            glPopMatrix();
         }
 
-        glPopMatrix();
-    }
-
-    if (bufferPeeking) {
-        drawHiddenBuffer();
+        if (bufferPeeking) {
+            drawHiddenBuffer(crystalPos);
+        }
     }
 
 
@@ -281,6 +334,8 @@ void drawUnlitShapes() {
     glEnable(GL_LIGHTING);
 }
 
+
+
 void drawWindow() {
     if (showInfoViewport) {
         setupLeft();
@@ -289,6 +344,19 @@ void drawWindow() {
     }
     setupRight();
 
+    if (selecting) {
+        //
+        drawHiddenBuffer(crystalPos);
+        if (selecting != selectLock) {
+            getID(xClick, yClick);
+        }
+        selecting = false;
+        glutSwapBuffers();
+        if (selectLock) {
+            selecting = true;
+            return;
+        }
+    }
     drawUnlitShapes();
 
 
@@ -344,7 +412,8 @@ void setupObjects() {
     // windowBlinds.setDebugStringAdd(&debugMap);
 
     //setup the flame
-    testflame = Flame(Coord(0, 0, 0));
+    testcampfire = Campfire(3, 10);
+
 
 
     //setup lvp class:
@@ -408,7 +477,12 @@ void setup() {
     //glListallEnabled:
     setupTextures();
     setupObjects();
-    glClearColor(rVPColorData.R, rVPColorData.G, rVPColorData.B, rVPColorData.A);
+    if(showInfoViewport) {
+        glClearColor(rVPColorData.R, rVPColorData.G, rVPColorData.B, rVPColorData.A);
+    }else {
+        glClearColor(135.0f/255.0f, 206.0f/255.0f, 235.0f/255.0f, 1.0f);
+    }
+    crystalPos = Coord(srnd(-20, 20), 4, srnd(-20, 20));
 }
 
 void resize(int w, int h) {
@@ -661,6 +735,8 @@ void keyboard(unsigned char key, int x, int y) {
             break;
 
         case 27: //Escape Key: Exit
+            exit(0);
+            break;
         default:
             break;
     }
@@ -813,6 +889,48 @@ void specialKeyboard(int key, int x, int y) {
 }
 #endif
 
+
+void menu(int id) {
+    switch (id) {
+        case 2: flamenoanim = !flamenoanim;
+        glout << "flame animation toggled" << '\n';
+        break;
+        case 3: animClip = !animClip;
+        glout << "Video toggled " << '\n';
+        break;
+        case 4: makeflames = !makeflames;
+        glout << "toggled Flames " << '\n';
+        break;
+    }
+}
+
+void quitMenu(int id) {
+    switch (id) {
+        case 1: exit(0);
+        break;
+    }
+}
+
+void top_menu(int id) {
+    if (id == 1) exit(0);
+}
+
+
+void makeMenu(void) {
+    int menui = glutCreateMenu(menu);
+    glutAddMenuEntry("Toggle Flame Animation", 2);
+    glutAddMenuEntry("Video toggled", 3);
+    glutAddMenuEntry("Disable Flames", 4);
+
+
+    glutCreateMenu(top_menu);
+    glutAddSubMenu("Debug Menu", menui);
+
+
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+}
+
+
 #ifndef FOLDING_REGION_ANIMATION
 
 
@@ -873,30 +991,60 @@ void peekHiddenBuffer() {
 }
 
 //idle animation
-void idleAnimVid() {
-    currFrame = (currFrame + 1) % numAnimFrames;
-    debugMap[60 - 25] = "Frame: " + std::to_string(currFrame);
-}
+
 
 #define ANIMSPEED 24
 
 void flameAnimFn(int value) {
-    testflame.animate();
-    testflame.resetControlPoints();
+    int animPeriod =  1000 / 60;
+    if(fps!= 0) {
+        if (!flamenoanim && makeflames) {
+            testcampfire.animate();
 
-    glutTimerFunc(1000 / 60, flameAnimFn, 1); // 60 times per second
+        }
+
+
+        if(fps < animPeriod){
+            animPeriod = 1000 / fps;
+        }
+    }
+
+        glutTimerFunc(animPeriod, flameAnimFn, 1); // 60 times per second
+
     glutPostRedisplay();
 }
 
 void animateClip(int value) {
-    if(animClip){
-        idleAnimVid();
+    int animPeriod = 1000 / 7;
+    if(fps!= 0) {
+        if(animClip){
+            currFrame = (currFrame + 1) % numAnimFrames;
+            debugMap[60 - 25] = "Frame: " + std::to_string(currFrame);
+        }
+
+        if(fps < animPeriod){
+            animPeriod = 1000 / fps;
+        }
     }
-    glutTimerFunc(1000 / ANIMSPEED, animateClip, 1); // ANIMSPEED times per second
+    glutTimerFunc(animPeriod, animateClip, 1); // ANIMSPEED times per second
     glutPostRedisplay();
 }
 
+void moveCrystal() {
+    // Get the camera's position
+    Coord camPos = cam.pos;
+    float camDistance = sqrt(camPos.X*camPos.X + camPos.Y*camPos.Y + camPos.Z*camPos.Z);
+    float newDistance = camDistance - 2.0f;
+    Coord normalizedCamPos = camPos / camDistance;
+    crystalPos = normalizedCamPos * newDistance;
+}
+
 void animate(int value) {
+    if(crystalHas) {
+        moveCrystal();
+
+    }
+
 
     glutTimerFunc(5, animate, 1);
     glutPostRedisplay();
@@ -918,10 +1066,12 @@ int main(int argc, char **argv) {
     glutPassiveMotionFunc(NULL);
     glutSpecialFunc(specialKeyboard);
     glutMouseFunc(mouseControl);
+    makeMenu();
 
     glutTimerFunc(1000 / 60, flameAnimFn, 1);
     glutTimerFunc(5, animate, 1);
     glutTimerFunc(1000 / ANIMSPEED, animateClip, 1);
+
 
 
     for (const std::string &i: instructionVec) {

@@ -321,5 +321,10 @@ extern unsigned int currFrame;
 extern bool showInfoViewport;
 
 
+extern bool makeflames;
+extern bool playanim;
+extern bool flamenoanim;
+
+
 
 #endif //GLOBALS_H

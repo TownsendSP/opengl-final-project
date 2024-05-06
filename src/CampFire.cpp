@@ -47,7 +47,7 @@ void Flame::draw() {
 
     glEnable(GL_AUTO_NORMAL);
     glEnable(GL_TEXTURE_2D);
-
+    glEnable(GL_LIGHT0);
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb);
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
     brightRed.setup();
@@ -55,9 +55,6 @@ void Flame::draw() {
 
     //material:
     shinyRed.apply();
-
-
-
 
     glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, texture_24[textureMap_24["flame24"]]);
@@ -72,91 +69,11 @@ void Flame::draw() {
 
     glPopMatrix();
 
-    if(showInfoViewport) {
-        glPushMatrix();
-        glColor4f(0.0f, 1.0f, 0.0f, 1.0f); // Set alpha to 0.5
-        glBegin(GL_POINTS);
-        int i = 0;
-        int j = 0;
-        for (i = 0; i < 15; i++) {
-            for (j = 0; j < 10; j++) {
-                glVertex3fv(controlPoints[i][j]);
-            }
-        }
-        glEnd();
-        glPopMatrix();
-
-    }
-
-
-
-    glDisable(GL_LIGHTING); // Disable lighting.
-
     glDisable(GL_AUTO_NORMAL);
 
     glDisable(GL_TEXTURE_2D); // Disable texturing.
 }
 
-// void drawFlame(Flame input) {
-//     //lighting:
-//     glDisable(GL_LIGHTING);
-//     glEnable(GL_AUTO_NORMAL);
-//     glEnable(GL_TEXTURE_2D);
-//
-//     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb);
-//     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-//     brightRed.setup();
-//     brightRed.enable();
-//
-//     //material:
-//     shinyRed.apply();
-//     glEnable(GL_COLOR_MATERIAL);
-//     glColor3i(255, 0, 255);
-//
-//
-//     glPushMatrix();
-//     glBindTexture(GL_TEXTURE_2D, texture_24[textureMap_24["flame24"]]);
-//     gluBeginSurface(nurbsObject);
-//     gluNurbsSurface(nurbsObject, 19, uknots, 14, vknots,
-//                     30, 3, controlPoints[0][0], 4, 4, GL_MAP2_VERTEX_3);
-//     gluNurbsSurface(nurbsObject, 4, uTextureknots, 4, vTextureknots,
-//                     4, 2, texturePoints[0][0], 2, 2, GL_MAP2_TEXTURE_COORD_2);
-//     gluEndSurface(nurbsObject);
-//     glPopMatrix();
-//
-//
-//     glDisable(GL_COLOR_MATERIAL);
-//     glDisable(GL_LIGHTING); // Disable lighting.
-//
-//     glDisable(GL_AUTO_NORMAL);
-//
-//     glDisable(GL_TEXTURE_2D); // Disable texturing.
-// }
-
-// void createChessboard(void) {
-//     int i, j;
-//     for (i = 0; i < 64; i++)
-//         for (j = 0; j < 64; j++)
-//             if ((((i / 8) % 2) && ((j / 8) % 2)) || (!((i / 8) % 2) && !((j / 8) % 2))) {
-//                 chessboard[i][j][0] = 0xFF;
-//                 chessboard[i][j][1] = 0x00;
-//                 chessboard[i][j][2] = 0x00;
-//             } else {
-//                 chessboard[i][j][0] = 0xFF;
-//                 chessboard[i][j][1] = 0xFF;
-//                 chessboard[i][j][2] = 0xFF;
-//             }
-// }
-
-// void loadProceduralTextures() {
-//     // Bind chessboard image to texture index[0].
-//     glBindTexture(GL_TEXTURE_2D, texture_24[0]);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 64, 64, 0, GL_RGB, GL_UNSIGNED_BYTE, chessboard);
-// }
 
 float Flame::taperX(float z) {
     return (-0.571428571429 * z * z) + 15;
@@ -245,55 +162,68 @@ Flame::Flame(Coord bottomLoca, Coord scalea) {
 }
 
 
-void Campfire::genFlame(float bottomRad) {
+Flame Campfire::genFlame(float bottomRad) {
     float sqrt1 = sqrt(srnd(-bottomRad, bottomRad) * srnd(-bottomRad, bottomRad) + srnd(-bottomRad, bottomRad) * srnd(-bottomRad, bottomRad));
-    flames.push_back(Flame(Coord(srnd(-bottomRad, bottomRad), 0.1, srnd(-bottomRad, bottomRad)),
-                           Coord(sqrt1,sqrt1,sqrt1)));
+    Flame ta(Coord((srnd(-bottomRad, bottomRad))/2+3, 5, srnd(-bottomRad, bottomRad)/2+3),
+    Coord(1, 1, 1));
+            // Coord(sqrt1,sqrt1,sqrt1));
+    return ta;
 }
 
-Campfire::Campfire(int numFlames, float bottomRad) {
+Campfire::Campfire(int numFlames, float bottomRada) {
     // add a numFlames to the vector
-    this -> bottomRad = bottomRad;
+    this -> bottomRad = bottomRada;
     for ( int i = 0; i < numFlames; i++) {
-    genFlame(bottomRad);
+        flames.push_back(genFlame(bottomRad));
     }
 }
 
-void makeLog(float rad, float len) {
+void makeLog(float rad, float len, GLUquadricObj *quadric ) {
     tableMat.apply();
     glPushMatrix();
-    GLUquadricObj *quadric = gluNewQuadric();
     gluCylinder(quadric, rad/0.7, rad, len, 20, 10);
-    gluDeleteQuadric(quadric);
     glPopMatrix();
 }
 
-
 void Campfire::fetchFlame(int i) {
     glPushMatrix();
-    glRotatef(-90, 1, 0, 0);
+    glTranslatefv(flames[i].relLoc);
+    glScalefv(flames[i].scale);
+    glRotatef(90, 1, 0, 0);
     flames[i].draw();
     glPopMatrix();
 }
 
 void Campfire::draw() {
+    hallLight.enable();
+    brightRed.enable();
+    if (makeflames) {
+        glEnable(GL_BLEND);
 
-    for (int i = 0; i < flames.size(); i++) {
-        glPushMatrix();
-        glTranslatefv(flames[i].relLoc);
-        glScalefv(flames[i].scale);
-        fetchFlame(i);
-        glPopMatrix();
+        for (int i = 0; i < flames.size(); i++) {
+            glPushMatrix();
+            // glScalefv(flames[i].scale);
+            debugMap[30] = "Flame: " + std::to_string(i);
+
+            fetchFlame(i);
+
+            glPopMatrix();
+        }
+                glDisable(GL_BLEND);
+
+
     }
 
     // draw 10 cylinders, each rotated 72 degrees
+    GLUquadricObj *quadric = gluNewQuadric();
     for (int i = 0; i < 10; i++) {
         glPushMatrix();
-        glRotatef(72 * i, 0, 1, 0);
+        glRotatef(36 * i, 0, 1, 0);
         glTranslatef(0, 0, 0.5);
-        makeLog(0.1, bottomRad);
+        makeLog(1, bottomRad, quadric);
         glPopMatrix();
     }
+    gluDeleteQuadric(quadric);
 }
 
 void Campfire::animate() {
@@ -301,9 +231,10 @@ void Campfire::animate() {
     for (int i = 0; i < flames.size(); i++) {
         if(flames[i].age * srnd(0, 1) > 1000) {
             flames.erase(flames.begin() + i);
-            genFlame(bottomRad);
+            flames[i] = genFlame(bottomRad);
         } else {
             flames[i].animate();
+            flames[i].resetControlPoints();
         }
     }
 }

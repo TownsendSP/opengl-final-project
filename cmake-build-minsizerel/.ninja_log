@@ -1,0 +1,18 @@
+# ninja log v5
+1	1437	1714671108357349832	CMakeFiles/tgsouthaFinalProject.dir/src/ColorData.cpp.o	be7ac3657512b2c0
+1	1443	1714671108357349832	CMakeFiles/tgsouthaFinalProject.dir/src/LeftVP.cpp.o	30913bd4390f184e
+2	1460	1714671108380683228	CMakeFiles/tgsouthaFinalProject.dir/src/Scenedraw.cpp.o	98813ed3514ef7c5
+1	1810	1714671108730684175	CMakeFiles/tgsouthaFinalProject.dir/src/Coord.cpp.o	bbc9cf60c67b4969
+1	2338	1714671109257352267	CMakeFiles/tgsouthaFinalProject.dir/src/Camera.cpp.o	5a234bdd6903cee0
+1	2684	1714671109604019872	CMakeFiles/tgsouthaFinalProject.dir/main.cpp.o	cd30fa37a21776b5
+2339	3157	1714671110077354486	CMakeFiles/tgsouthaFinalProject.dir/src/modelLoader.cpp.o	f29a8356e20eb583
+1443	3378	1714671110297355082	CMakeFiles/tgsouthaFinalProject.dir/src/fSceneObjs.cpp.o	1dcc13b388d905f6
+1460	3446	1714671110364021929	CMakeFiles/tgsouthaFinalProject.dir/src/globals.cpp.o	e59792ce475cc306
+1810	3470	1714671110390688668	CMakeFiles/tgsouthaFinalProject.dir/src/lighting.cpp.o	33fa962754a33787
+1438	3506	1714671110424022091	CMakeFiles/tgsouthaFinalProject.dir/src/CampFire.cpp.o	2f9def582e45c9f2
+2684	3988	1714671110907356733	CMakeFiles/tgsouthaFinalProject.dir/src/testingFunctions.cpp.o	36fbeb9bd682c313
+3157	4477	1714671111397358059	CMakeFiles/tgsouthaFinalProject.dir/src/textureLoader.cpp.o	406a0114d97e36c0
+3378	4691	1714671111610691970	CMakeFiles/tgsouthaFinalProject.dir/src/things.cpp.o	9c7958cd54ac02d2
+4691	4789	1714671111707358899	tgsouthaFinalProject	f4ff00aea1804145
+23	3110	1714957855098419166	CMakeFiles/tgsouthaFinalProject.dir/src/CampFire.cpp.o	2f9def582e45c9f2
+3110	3488	1714957855471906461	tgsouthaFinalProject	f4ff00aea1804145
