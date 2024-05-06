@@ -207,7 +207,7 @@ void loadTexture_32(std::string filename, int id) {
 
     // Specify an image as the texture_32 to be bound with the currently active texture_32 index.
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image[0]->sizeX, image[0]->sizeY, 0,
-                 GL_BGRA, GL_UNSIGNED_BYTE, image[0]->data); // Change here for 32-bit
+                 GL_BGRA_EXT, GL_UNSIGNED_BYTE, image[0]->data); // Change here for 32-bit
 
     std::cout << "Loaded texture_32: " << pathname << " as " << name << " with index: " << id << " - Dimensions " <<
             image[0]->sizeX << "x" << image[0]->sizeY << std::endl;

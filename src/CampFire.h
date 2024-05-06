@@ -5,7 +5,7 @@
 #ifndef CAMPFIREATTEMPT_H
 #define CAMPFIREATTEMPT_H
 #include "Coord.h"
-
+extern std::map<int, std::string> debugMap;extern std::map<int, std::string> debugMap;
 
 class Flame {
 public:

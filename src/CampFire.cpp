@@ -3,18 +3,20 @@
 //
 
 #include "CampFire.h"
+#include "globals.h"
 #include "textureLoader.h"
 #include "lighting.h"
+#include "testingFunctions.h"
 
 // the flame is a bicubicSplineSurfaceLitTextured, but heavily modified
 
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <map>
 #include <string>
 
-#include "../../../Documents/CIS_425/tgsouthaHW4/src/things.h"
+
+
 
 
 float Flame::texturePoints[2][2][2] =

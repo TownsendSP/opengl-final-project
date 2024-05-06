@@ -3,19 +3,31 @@ project(tgsouthaFinalProject)
 
 set(CMAKE_CXX_STANDARD 17)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+#if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(CMAKE_PREFIX_PATH "C:/Program/NVIDIA Corporation/Cg")
-endif()
+#endif()
 
 set(MAIN_BINARY_NAME "tgsouthaFinalProject")
-set(TESTING_BINARY_NAME "testing")
 
 find_package(OpenGL REQUIRED)
+#find_package(GL REQUIRED)
 find_package(GLUT REQUIRED)
-find_package(GLU REQUIRED)
 
-include_directories(${OPENGL_INCLUDE_DIR}   ${GLUT_INCLUDE_DIRS})
 
+#set(GLUT_INCLUDE_DIR "C:/Program/NVIDIA Corporation/Cg/include")
+#set(GLUT_glut_LIBRARY "C:/Program/NVIDIA Corporation/Cg/lib/glut32.lib")
+#find_package(GLUT REQUIRED)
+
+
+include_directories(${OPENGL_INCLUDE_DIR}  ${GLUT_INCLUDE_DIRS})
+#include_directories(${OPENGL_INCLUDE_DIR}   ${GLUT_INCLUDE_DIRS})
+
+message("OpenGL include directory: ${OPENGL_INCLUDE_DIRS}")
+message("GLUT include directory: ${GLUT_INCLUDE_DIRS}")
+message("GLUT Library: ${GLUT_glut_LIBRARY}")
+message("OpenGL Library: ${OPENGL_LIBRARIES}")
+
+#target_link_libraries (${MAIN_BINARY_NAME} ${GLUT_LIBRARIES})
 add_executable(${MAIN_BINARY_NAME} main.cpp
         res/models/crystal.h
         res/models/hat.h
@@ -49,21 +61,4 @@ add_executable(${MAIN_BINARY_NAME} main.cpp
         src/things.h
 
 )
-
-target_link_libraries (${MAIN_BINARY_NAME}  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
-
-add_executable(testing
-        mainForTesting.cpp
-)
-target_link_libraries (${TESTING_BINARY_NAME}  ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
-
-
-
-add_executable(objtoh
-        objtoh/objtoh.cpp
-        objtoh/tiny_obj_loader.h
-)
-
-
-#add_subdirectory("/home/tgsp/Documents/CIS_425/Examples/" "/home/tgsp/Documents/CIS_425/Examples/cmake-build-debug")
-#add_subdirectory("/home/tgsp/Documents/CIS_425/tgsouthaHW4/" "/home/tgsp/Documents/CIS_425/tgsouthaHW4/cmake-build-visual-studio")
+target_link_libraries (${MAIN_BINARY_NAME} ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
