@@ -141,11 +141,9 @@ void crystalFlameInteraction() {
         makeflames = true;
     }
     else {
-        flamenoanim = true;
-        makeflames = !flamenoanim;
+        makeflames = flamenoanim;
+        flamenoanim = !makeflames;
     }
-
-
 }
 
 void getID(int x, int y) {
@@ -267,6 +265,9 @@ void drawLitShapes() {
     glShadeModel(GL_SMOOTH);
 
 
+    glShadeModel(GL_FLAT);
+
+
     // tableMat.apply();
     // glPushMatrix();
     // glTranslatef(0, 1, 0);
@@ -284,13 +285,12 @@ void drawLitShapes() {
     glScalef(2, 2, 2);
     drawModel(crystalVertices, crystalIndices, 2900, 4428);
     glPopMatrix();
-    //std::cout << "Drawing" << std::endl;
-    testcampfire.draw();
-
+    glShadeModel(GL_SMOOTH);
 
     drawTexEgs();
 
 
+    testcampfire.draw();
     glutSwapBuffers();
 }
 
@@ -361,13 +361,10 @@ void drawWindow() {
 
 
     drawLitShapes();
-    // glDisable(GL_LIGHTING);
+
 
 
     glDisable(GL_LIGHTING);
-
-    // glDisable(GL_BLEND);
-
 
 }
 
@@ -397,12 +394,6 @@ void myPause(int pauseLength = 100) {
 void setupObjects() {
     cam = Camera(Coord(1, 2, 0), Coord(2, 2, 0), Coord(0, 1, 0));
     debugXes.emplace_back(Coord(0, 0, 0), 100, 2);
-
-    // windowBlinds = Blinds(2, 2, 0.1, 30);
-
-
-    // roomLight = Light(
-
     headLamp.enable();
 
     // headLamp.setup();
@@ -614,19 +605,6 @@ void keyboard(unsigned char key, int x, int y) {
         case 'F': //CAMERA UP
             cam.moveCamWithColl(Coord(0, 1 * moveSpeed, 0));
             break;
-        case 'd': //reset all but the camera
-            if (modifiers & GLUT_ACTIVE_ALT) {
-                activateDoor();
-            } else {
-                hallLightAction();
-                activateDoor();
-            }
-            break;
-        case 'R': //reset all
-            glout << DEFAULT;
-        // glClearColor(rVPColorData.R, rVPColorData.G, rVPColorData.B, rVPColorData.A);
-
-            break;
         case ' ': //Toggle Mouse control of Camera
             if (modifiers & GLUT_ACTIVE_SHIFT) {
                 useCollision = !useCollision;
@@ -638,60 +616,39 @@ void keyboard(unsigned char key, int x, int y) {
             break;
 
         case '1':
-            if (modifiers & GLUT_ACTIVE_ALT) {
-                enabledFaces = enabledFaces ^ FRONT_FACE;
-                glout << "FRONT_FACE: " << (enabledFaces & FRONT_FACE ? "Enabled" : "Disabled") << '\n';
-            } else {
                 cam.restoreState(0);
                 glout << "Camera State 1 Restored" << '\n';
                 glout << "Pos: " << cam.pos.toString(0) << "Tgt: " << cam.tgt.toString(0) << '\n';
-            }
+
             break;
         case '2':
-            if (modifiers & GLUT_ACTIVE_ALT) {
-                enabledFaces = enabledFaces ^ TOP_FACE;
-                glout << "TOP_FACE: " << (enabledFaces & TOP_FACE ? "Enabled" : "Disabled") << '\n';
-            } else {
+
                 cam.restoreState(1);
                 glout << "Camera State " << key << " Restored" << '\n';
                 glout << "Pos: " << cam.pos.toString(0) << " Cam Tgt: " << cam.tgt.toString(0) << '\n';
-            }
+
             break;
         case '3':
-            if (modifiers & GLUT_ACTIVE_ALT) {
-                enabledFaces = enabledFaces ^ RIGHT_FACE;
-                glout << "RIGHT_FACE: " << (enabledFaces & RIGHT_FACE ? "Enabled" : "Disabled") << std::endl;
-            } else {
+
                 cam.restoreState(2);
                 glout << "Camera State " << key << " Restored" << '\n';
                 glout << "Pos:" << cam.pos.toString(0) << " Cam Tgt: " << cam.tgt.toString(0) << '\n';
-            }
+
             break;
         case '4':
-            if (modifiers & GLUT_ACTIVE_ALT) {
-                enabledFaces = enabledFaces ^ BACK_FACE;
-                glout << "BACK_FACE : " << (enabledFaces & BACK_FACE ? "Enabled" : "Disabled") << std::endl;
-            } else {
+
                 cam.restoreState(3);
                 glout << "Camera State " << key << " Restored" << '\n';
                 glout << "Pos:" << cam.pos.toString(0) << " Cam Tgt: " << cam.tgt.toString(0) << '\n';
-            }
+
             break;
         case '5':
-            if (modifiers & GLUT_ACTIVE_ALT) {
-                enabledFaces = enabledFaces ^ BOTTOM_FACE;
-                glout << "BOTTOM_FACE : " << (enabledFaces & BOTTOM_FACE ? "Enabled" : "Disabled") << std::endl;
-            } else {
+
                 cam.restoreState(4);
                 glout << "Camera State " << key << " Restored" << '\n';
                 glout << "Pos:" << cam.pos.toString(0) << " Cam Tgt: " << cam.tgt.toString(0) << '\n';
-            }
+
             break;
-        case '6':
-            if (modifiers & GLUT_ACTIVE_ALT) {
-                enabledFaces = enabledFaces ^ LEFT_FACE;
-                glout << "LEFT_FACE Face: " << (enabledFaces & LEFT_FACE ? "Enabled" : "Disabled") << std::endl;
-            }
         case '!': cam.storeState(0);
             glout << "State1:" << "Pos:" << cam.pos.toString(0) << " Cam Tgt " << cam.tgt.toString(0) << '\n';
             break;

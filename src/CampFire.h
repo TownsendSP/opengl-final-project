@@ -52,6 +52,10 @@ public:
     // static float controlPoints[8][5][3];
 
 
+    void predraw();
+
+    void postdraw();
+
     void draw();
 
     float taperX(float z);
