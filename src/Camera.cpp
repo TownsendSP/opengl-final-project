@@ -337,20 +337,22 @@ void Camera::moveCamWithColl(Coord deltaTranslation) {
     transVec.Z = deltaTranslation.X * sinYaw + deltaTranslation.Z * cosYaw;
     Coord a = pos + transVec;
     if(useCollision) {
-        int cYZ = collisionYZ(a);
-        int cYX = collisionYX(a);
-        int CXZ = collisionXZ(a);
+        float distance = sqrt(a.X*a.X + a.Z*a.Z);
 
-        if( cYZ != COLL_NONE_YZ){
-            transVec.X = 0;
-        } if( cYX != COLL_NONE_YX){
-            transVec.Z = 0;
-        } if( CXZ != COLL_NONE_XZ){
-            transVec.Y = 0;
+        // If the new position is within 10 units of (0,0), prevent the translation towards (0,0)
+        if(distance < 10.0f) {
+            if(a.X < pos.X) {
+                transVec.X = 0;
+            }
+            if(a.Z < pos.Z) {
+                transVec.Z = 0;
+            }
         }
     }
     pos = pos + transVec;
     tgt = tgt + transVec;
+
+
     // check distance to card:
 
     updateCardInfo();

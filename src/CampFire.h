@@ -52,6 +52,10 @@ public:
     // static float controlPoints[8][5][3];
 
 
+    void predraw();
+
+    void postdraw();
+
     void draw();
 
     float taperX(float z);
@@ -82,9 +86,17 @@ public:
 
     Flame genFlame(float bottomRad);
 
+
+
     Campfire(int numFlames, float bottomRad);
 
+    void cacheFlame(int i);
+
     void fetchFlame(int i);
+
+    void drawBase();
+
+    void drawFlames();
 
     void draw();
     void animate();

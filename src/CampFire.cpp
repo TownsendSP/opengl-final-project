@@ -9,14 +9,12 @@
 // the flame is a bicubicSplineSurfaceLitTextured, but heavily modified
 
 
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <map>
 #include <string>
+#include "globals.h"
+#include "testingFunctions.h"
 
-#include "../../../Documents/CIS_425/tgsouthaHW4/src/things.h"
-
-
+bool cache  = false;
 float Flame::texturePoints[2][2][2] =
 {
     {{0.0, 0.0}, {0.0, 1.0}},
@@ -42,36 +40,45 @@ float Flame::uTextureknots[4] ={0.0, 0.0, 12.0, 12.0};
 //
 // }
 
-void Flame::draw() {
+void Flame::predraw() {
     //lighting:
 
-    glEnable(GL_AUTO_NORMAL);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHT0);
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb);
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    // glEnable(GL_AUTO_NORMAL);
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    // glEnable(GL_LIGHT0);
+    // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb);
+    // glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    glDisable(GL_LIGHTING);
+
     brightRed.setup();
     brightRed.enable();
-
     //material:
     shinyRed.apply();
+    glEnable(GL_TEXTURE_2D); // Disable texturing.
 
-    glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, texture_24[textureMap_24["flame24"]]);
-    glColor4f(1.0f, 1.0f, 1.0f, 0.3f); // Set alpha to 0.5
+    glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
+}
+
+void Flame::postdraw() {
+    // glDisable(GL_AUTO_NORMAL);
+
+    glDisable(GL_TEXTURE_2D); // Disable texturing.
+    glEnable(GL_LIGHTING);
+}
+
+void Flame::draw() {
+    glPushMatrix();
     gluBeginSurface(nurbsObject);
     gluNurbsSurface(nurbsObject, 19, uknots, 14, vknots,
                     30, 3, controlPoints[0][0], 4, 4, GL_MAP2_VERTEX_3);
     gluNurbsSurface(nurbsObject, 4, uTextureknots, 4, vTextureknots,
                     4, 2, texturePoints[0][0], 2, 2, GL_MAP2_TEXTURE_COORD_2);
     gluEndSurface(nurbsObject);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // Set alpha to 0.5
-
+    gluEndSurface(nurbsObject);
     glPopMatrix();
-
-    glDisable(GL_AUTO_NORMAL);
-
-    glDisable(GL_TEXTURE_2D); // Disable texturing.
 }
 
 
@@ -147,7 +154,7 @@ Flame::Flame(Coord bottomLoca, Coord scalea) {
     //instantiate the control points:
 
     gluNurbsProperty(nurbsObject, GLU_SAMPLING_METHOD, GLU_PATH_LENGTH);
-    gluNurbsProperty(nurbsObject, GLU_SAMPLING_TOLERANCE, 100.0);
+    gluNurbsProperty(nurbsObject, GLU_SAMPLING_TOLERANCE, 1000.0);
     gluNurbsProperty(nurbsObject, GLU_DISPLAY_MODE, GLU_FILL);
 
     resetControlPoints(); // Fill control points array for real spline surface.
@@ -166,6 +173,7 @@ Flame Campfire::genFlame(float bottomRad) {
     float sqrt1 = sqrt(srnd(-bottomRad, bottomRad) * srnd(-bottomRad, bottomRad) + srnd(-bottomRad, bottomRad) * srnd(-bottomRad, bottomRad));
     Flame ta(Coord((srnd(-bottomRad, bottomRad))/2+3, 5, srnd(-bottomRad, bottomRad)/2+3),
     Coord(1, 1, 1));
+    ta.animate();
             // Coord(sqrt1,sqrt1,sqrt1));
     return ta;
 }
@@ -175,6 +183,7 @@ Campfire::Campfire(int numFlames, float bottomRada) {
     this -> bottomRad = bottomRada;
     for ( int i = 0; i < numFlames; i++) {
         flames.push_back(genFlame(bottomRad));
+        cacheFlame(i);
     }
 }
 
@@ -185,35 +194,27 @@ void makeLog(float rad, float len, GLUquadricObj *quadric ) {
     glPopMatrix();
 }
 
+void Campfire::cacheFlame(int i) {
+    glDeleteLists(i, 1);
+    glNewList(i, GL_COMPILE);
+    flames[i].draw();
+    glEndList();
+}
+
 void Campfire::fetchFlame(int i) {
     glPushMatrix();
     glTranslatefv(flames[i].relLoc);
     glScalefv(flames[i].scale);
     glRotatef(90, 1, 0, 0);
+    // glCallList(i);
     flames[i].draw();
     glPopMatrix();
 }
 
-void Campfire::draw() {
+void Campfire::drawBase() {
     hallLight.enable();
     brightRed.enable();
-    if (makeflames) {
-        glEnable(GL_BLEND);
-
-        for (int i = 0; i < flames.size(); i++) {
-            glPushMatrix();
-            // glScalefv(flames[i].scale);
-            debugMap[30] = "Flame: " + std::to_string(i);
-
-            fetchFlame(i);
-
-            glPopMatrix();
-        }
-                glDisable(GL_BLEND);
-
-
-    }
-
+    // glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // Set alpha to 0.5
     // draw 10 cylinders, each rotated 72 degrees
     GLUquadricObj *quadric = gluNewQuadric();
     for (int i = 0; i < 10; i++) {
@@ -224,6 +225,27 @@ void Campfire::draw() {
         glPopMatrix();
     }
     gluDeleteQuadric(quadric);
+    brightRed.disable();
+}
+
+void Campfire::drawFlames() {
+    flames[0].predraw();
+    for (int i = 0; i < flames.size(); i++) {
+        glPushMatrix();
+        // glScalefv(flames[i].scale);
+        debugMap[30] = "Flame: " + std::to_string(i);
+        fetchFlame(i);
+        glPopMatrix();
+    }
+    flames[0].postdraw();
+}
+
+void Campfire::draw() {
+    if (makeflames) {
+        glEnable(GL_BLEND);
+        drawFlames();
+    }
+    drawBase();
 }
 
 void Campfire::animate() {
@@ -231,13 +253,18 @@ void Campfire::animate() {
     for (int i = 0; i < flames.size(); i++) {
         if(flames[i].age * srnd(0, 1) > 1000) {
             flames.erase(flames.begin() + i);
-            flames[i] = genFlame(bottomRad);
+            flames.emplace(flames.begin() + i, genFlame(bottomRad));
+            cacheFlame(i);
+
         } else {
             flames[i].animate();
+            cacheFlame(i);
             flames[i].resetControlPoints();
         }
     }
 }
+
+
 
 
 
