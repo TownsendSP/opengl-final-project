@@ -7,14 +7,9 @@
 #define PI 3.1415926
 
 #include "globals.h"
-#include <iostream>
-#include <chrono>
-#include <cmath>
 #include <random>
 #include <string>
-#include <functional>
-#include <map>
-#include <fstream>
+
 
 //
 // Created by tgsp on 4/29/2024.
@@ -23,7 +18,6 @@
 #include "fSceneObjs.h"
 
 #include "Coord.h"
-#include "modelLoader.h"
 #include "testingFunctions.h"
 
 

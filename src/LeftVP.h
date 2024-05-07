@@ -5,11 +5,6 @@
 #ifndef TGSOUTHAHW4_LEFTVP_H
 #define TGSOUTHAHW4_LEFTVP_H
 
-#include "globals.h"
-#include <string>
-#include "Coord.h"
-
-
 extern float conHeightPercent;
 void drawLeft();
 void setupLeft();

@@ -9,32 +9,30 @@
 // the flame is a bicubicSplineSurfaceLitTextured, but heavily modified
 
 
-#include <map>
 #include <string>
 #include "globals.h"
 #include "testingFunctions.h"
 
-bool cache  = false;
 float Flame::texturePoints[2][2][2] =
-{
-    {{0.0, 0.0}, {0.0, 1.0}},
-    {{1.0, 0.0}, {1.0, 1.0}}
-};
+        {
+                {{0.0, 0.0}, {0.0, 1.0}},
+                {{1.0, 0.0}, {1.0, 1.0}}
+        };
 float Flame::uknots[19] =
-{
-    0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
-    7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 12.0, 12.0, 12.0
-};
+        {
+                0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+                7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 12.0, 12.0, 12.0
+        };
 
 float Flame::vknots[14] =
-{
-    0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
-    7.0, 7.0, 7.0, 7.0
-};
+        {
+                0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0,
+                7.0, 7.0, 7.0, 7.0
+        };
 
 float Flame::vTextureknots[4] = {0.0, 0.0, 7.0, 7.0};
 
-float Flame::uTextureknots[4] ={0.0, 0.0, 12.0, 12.0};
+float Flame::uTextureknots[4] = {0.0, 0.0, 12.0, 12.0};
 //
 // void Flame::modControlPoints() {
 //
@@ -87,26 +85,26 @@ float Flame::taperX(float z) {
 }
 
 float Flame::funcFlameY(float z) {
-    return (currX/2) * 0.571428571429 * z * z; //0.571428571429 *
+    return (currX / 2) * 0.571428571429 * z * z; //0.571428571429 *
 }
 
 float Flame::shiftX(float z) {
-    return (currX/2) * 0.571428571429 * z * z;
+    return (currX / 2) * 0.571428571429 * z * z;
 }
 
 
-void Flame::resetControlPoints(void){ // sets the x of all
+void Flame::resetControlPoints(void) { // sets the x of all
     int i, j;
     for (i = 0; i < 15; i++) {
         for (j = 0; j < 10; j++) {
             //og -2.5 + j * 0.5;
-            if(j>4) {
-                controlPoints[i][j][0] = -2.5 + taperX(j)/10 * 0.5 + shiftX(i)/10;
+            if (j > 4) {
+                controlPoints[i][j][0] = -2.5 + taperX(j) / 10 * 0.5 + shiftX(i) / 10;
             } else {
-                controlPoints[i][j][0] = -2.5 + taperX(j)/10 * 0.5 + shiftX(i)/10;
+                controlPoints[i][j][0] = -2.5 + taperX(j) / 10 * 0.5 + shiftX(i) / 10;
             }
             // controlPoints[i][j][0] = j * 0.5 + taperX(i);
-            controlPoints[i][j][1] = funcFlameY(i)/15;
+            controlPoints[i][j][1] = funcFlameY(i) / 15;
             // controlPoints[i][j][1] = 0.0;
             controlPoints[i][j][2] = 6.0 - i;
         }
@@ -145,11 +143,10 @@ void Flame::animate() {
 }
 
 
-
 Flame::Flame(Coord bottomLoca, Coord scalea) {
     this->relLoc = bottomLoca;
-    this -> scale = scalea;
-    this -> age = 0;
+    this->scale = scalea;
+    this->age = 0;
     this->nurbsObject = gluNewNurbsRenderer();
     //instantiate the control points:
 
@@ -158,10 +155,10 @@ Flame::Flame(Coord bottomLoca, Coord scalea) {
     gluNurbsProperty(nurbsObject, GLU_DISPLAY_MODE, GLU_FILL);
 
     resetControlPoints(); // Fill control points array for real spline surface.
-    this -> targetY = srnd(-1, 1);
-    this -> targetX = srnd(-1, 1);
-    this -> currY = 0.0f;
-    this -> currX = 0.0f;
+    this->targetY = srnd(-1, 1);
+    this->targetX = srnd(-1, 1);
+    this->currY = 0.0f;
+    this->currX = 0.0f;
     // createChessboard();
     // loadProceduralTextures();
 
@@ -170,27 +167,28 @@ Flame::Flame(Coord bottomLoca, Coord scalea) {
 
 
 Flame Campfire::genFlame(float bottomRad) {
-    float sqrt1 = sqrt(srnd(-bottomRad, bottomRad) * srnd(-bottomRad, bottomRad) + srnd(-bottomRad, bottomRad) * srnd(-bottomRad, bottomRad));
-    Flame ta(Coord((srnd(-bottomRad, bottomRad))/2+3, 5, srnd(-bottomRad, bottomRad)/2+3),
-    Coord(1, 1, 1));
+    float sqrt1 = sqrt(srnd(-bottomRad, bottomRad) * srnd(-bottomRad, bottomRad) +
+                       srnd(-bottomRad, bottomRad) * srnd(-bottomRad, bottomRad));
+    Flame ta(Coord((srnd(-bottomRad, bottomRad)) / 2 + 3, 5, srnd(-bottomRad, bottomRad) / 2 + 3),
+             Coord(1, 1, 1));
     ta.animate();
-            // Coord(sqrt1,sqrt1,sqrt1));
+    // Coord(sqrt1,sqrt1,sqrt1));
     return ta;
 }
 
 Campfire::Campfire(int numFlames, float bottomRada) {
     // add a numFlames to the vector
-    this -> bottomRad = bottomRada;
-    for ( int i = 0; i < numFlames; i++) {
+    this->bottomRad = bottomRada;
+    for (int i = 0; i < numFlames; i++) {
         flames.push_back(genFlame(bottomRad));
         cacheFlame(i);
     }
 }
 
-void makeLog(float rad, float len, GLUquadricObj *quadric ) {
+void makeLog(float rad, float len, GLUquadricObj *quadric) {
     tableMat.apply();
     glPushMatrix();
-    gluCylinder(quadric, rad/0.7, rad, len, 20, 10);
+    gluCylinder(quadric, rad / 0.7, rad, len, 20, 10);
     glPopMatrix();
 }
 
@@ -251,7 +249,7 @@ void Campfire::draw() {
 void Campfire::animate() {
     // just call animate on each of the flames
     for (int i = 0; i < flames.size(); i++) {
-        if(flames[i].age * srnd(0, 1) > 1000) {
+        if (flames[i].age * srnd(0, 1) > 1000) {
             flames.erase(flames.begin() + i);
             flames.emplace(flames.begin() + i, genFlame(bottomRad));
             cacheFlame(i);

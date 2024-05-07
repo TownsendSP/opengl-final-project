@@ -7,19 +7,11 @@
 #include "Coord.h"
 #include "Camera.h"
 #include "ColorData.h"
-#include "globals.h"
-
-
-
 
 class testingFunctions {
 
 };
 
-// uint8_t animInfo;
-// Coord coneRotAnim;
-// float coneHeight;
-// float coneRotSpeed;
 inline uint8_t animInfo = 0b000;
 inline Coord coneRotAnim = Coord(0, 0, 0);
 inline float coneHeight = 3;

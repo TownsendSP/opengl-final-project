@@ -8,22 +8,12 @@
 # include <GL/glut.h>
 #endif
 
-
-#include <iostream>
-#include <chrono>
-#include <cmath>
-#include <random>
-#include <string>
-#include <functional>
-#include <map>
-
 //My Imports and Defines
 #include "Coord.h"
 #include "Camera.h"
 #include "things.h"
 #include "ColorData.h"
 #include "globals.h"
-#include "lighting.h"
 #include "testingFunctions.h"
 
 //

@@ -12,9 +12,7 @@
 #include <cmath>
 #include <random>
 #include <string>
-#include <functional>
 #include <map>
-#include <fstream>
 
 //My Imports and Defines
 
@@ -25,12 +23,9 @@
 #include "src/ColorData.h"
 
 #include "src/lighting.h"
-#include "src/testingFunctions.h"
 #include "src/LeftVP.h"
 
-#include "res/models/hat.h"
 #include "res/models/crystal.h"
-#include "src/modelLoader.h"
 #include "src/Scenedraw.h"
 #include "src/textureLoader.h"
 #include "src/fSceneObjs.h"
@@ -72,9 +67,6 @@ float sensitivity = 0.01f; // camera movement and mouse sensitivity
 float blindAnimSpeed = 0.05;
 
 bool drawDebugPoints = false;
-bool focusPoint = false;
-bool drawAllPoints = false;
-int currPointDraw = 0;
 //function pointer to infoVP addDebugString
 
 std::map<int, std::string> debugMap;
@@ -189,10 +181,6 @@ void getID(int x, int y) {
         default:
             return;
     }
-}
-
-Coord rotToVec(float rotRadX, float rotRadY) {
-    return Coord(cos(rotRadX) * sin(rotRadY), sin(rotRadX), cos(rotRadX) * cos(rotRadY));
 }
 
 void updateSpotlight() {
@@ -382,11 +370,6 @@ void showKeybindings() {
     }
 }
 
-void myPause(int pauseLength = 100) {
-    int tStart = clock();
-    while (clock() - tStart < pauseLength) { ; }
-}
-
 //section  setupObjects() {
 void setupObjects() {
     cam = Camera(Coord(17.76, 12, 17.70), Coord(17.10, 11.84, 17), Coord(0, 1, 0));
@@ -535,7 +518,7 @@ void toggleMouse() {
     if (useMouse) {
         glutPassiveMotionFunc(mouse);
     } else {
-        glutPassiveMotionFunc(NULL);
+        glutPassiveMotionFunc(nullptr);
     }
 }
 
@@ -700,7 +683,6 @@ void specialKeyboard(int key, int x, int y) {
         case GLUT_KEY_F4:
             headLamp.lightswitch();
             glout << "Headlamp switched " << (headLamp.enabled ? "On\n" : "Off\n") << '\n';
-            debugMap[60 - 20] = "Headlamp: " + headLamp.enabled ? "On" : "Off";
 
             break;
         case GLUT_KEY_F5:
@@ -798,6 +780,7 @@ void menu(int id) {
         case 4: makeflames = !makeflames;
         glout << "toggled Flames " << '\n';
         break;
+
     }
 }
 
@@ -953,7 +936,7 @@ int main(int argc, char **argv) {
     glutDisplayFunc(drawWindow);
     glutReshapeFunc(resize);
     glutKeyboardFunc(keyboard);
-    glutPassiveMotionFunc(NULL);
+    glutPassiveMotionFunc(nullptr);
     glutSpecialFunc(specialKeyboard);
     glutMouseFunc(mouseControl);
     makeMenu();

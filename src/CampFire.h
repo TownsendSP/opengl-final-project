@@ -40,8 +40,6 @@ public:
     // End globals.
 
 
-    static unsigned int texture[1]; // bicubicSplineSurfaceLitTextured.cpp
-    static unsigned char chessboard[64][64][3]; // Storage for chessboard image.
 
     GLUnurbsObj *nurbsObject; // Pointer to NURBS object.
 
@@ -81,7 +79,6 @@ public:
     bool exists = true;
     std::vector<Flame> flames;
     int numFlames;
-    float radius;
     float bottomRad;
 
     Flame genFlame(float bottomRad);

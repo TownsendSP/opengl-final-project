@@ -6,13 +6,12 @@
 #include "globals.h"
 
 #include <fstream>
-#include <fstream>
 #include <iostream>
 #include <list>
 #include <utility>
 #include <algorithm>
 #include <filesystem>
-bool shouldbreak = false;
+
 //not bothering to create 24/32 bit depth animations, if I need any transparent animations i'll just load an 8-bit mask
 int loadAnim(const std::string &directoryForFrames) {
     std::list<std::string> filenames;
@@ -32,10 +31,6 @@ int loadAnim(const std::string &directoryForFrames) {
     numAnimFrames = i;
     // Return the number of .bmp files
     return filenames.size();
-}
-
-int animVideo(int currFrameI) {
-    return (currFrameI + 1) % numAnimFrames;
 }
 
 std::string extractFileName(std::string filename) {
@@ -103,10 +98,7 @@ void loadTexture_24(std::string filename, int id) {
     std::string pathname = filename;
     std::string name = extractFileName(filename);
 
-    if(id == 357 || id == 358)
-        shouldbreak = true;
-    else
-        shouldbreak = false;
+    if(id == 357 || id == 358);
 
 
     BitMapFile *image[1];
@@ -224,4 +216,5 @@ void setupTextures_32() {
 
 void setupTextures() {
     setupTextures_24();
+    setupTextures_32();
 }

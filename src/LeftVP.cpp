@@ -4,7 +4,7 @@
 #include "globals.h"
 #include "LeftVP.h"
 
-#include <iostream>
+
 #include <map>
 
 #include "ColorData.h"

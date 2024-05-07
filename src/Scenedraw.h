@@ -4,7 +4,7 @@
 
 #ifndef SCENEDRAW_H
 #define SCENEDRAW_H
-#include "lighting.h"
+#include "Coord.h"
 
 
 void drawHiddenBuffer(Coord crystalPos);

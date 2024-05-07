@@ -1,23 +1,8 @@
 #include "Scenedraw.h"
 #include "Coord.h"
-
 #include "globals.h"
 #include "things.h"
 
-#include "Camera.h"
-
-
-extern std::map<int, std::string> debugMap;
-extern Camera cam;
-extern Blinds windowBlinds;
-
-void lastHiddenCubeMirrored() {
-    glColor3f(0,1,0);
-    glPushMatrix();
-    glTranslatef(15,-5.5 , 2);
-    cubeOfPlanes(Coord(), Coord(1, -3, 1), 20, OUTSIDEOUT, ALL_FACE);
-    glPopMatrix();
-}
 void drawHiddenBuffer(Coord thing) {
     glDisable(GL_LIGHTING);
 
@@ -50,7 +35,3 @@ if(!hasCrystal) {
 
     glEnable(GL_LIGHTING);
 }
-
-
-
-

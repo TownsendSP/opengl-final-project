@@ -6,7 +6,6 @@
 #define CAMERA_H
 
 #include "globals.h"
-#include <complex.h>
 #include <map>
 #include <vector>
 #include "Coord.h"
@@ -14,7 +13,6 @@
 
 class Camera {
 
-    std::string *debug_string_add_;
     std::map<int, std::string> *debug_string_add_map_;
 
 public:
@@ -23,16 +21,13 @@ public:
     Coord tgt;
     Coord up;
     Coord ang;
-    float transSpeed;
-    float rotSens;
-    Coord dirVecPublicUsage;
     int whichPlace;
 
     // constructor:
 
-    Camera(float position[3], float target[3], float orientation[3], float trans_speed, float rot_sens);
+    Camera(float position[3], float target[3], float orientation[3], float transSpeed, float rot_sens);
 
-    Camera(Coord pos, Coord target, Coord orientation, float trans_speed, float rot_sens);
+    Camera(Coord pos, Coord target, Coord orientation, float transSpeed, float rot_sens);
 
     Camera(Coord Pos, Coord Target, Coord orientation);
 
@@ -102,5 +97,4 @@ Coord calcTarget(Coord position, Coord pitchYaw);
 
 std::string trunc(float fl, int prec = 3);
 
-void mapInsert(std::map<int, std::string> *mapthing, std::vector<std::string>, int indexInsert);
 #endif //CAMERA_H

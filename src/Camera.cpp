@@ -13,9 +13,6 @@
 #include <fstream>
 #include <sstream>
 #include <ostream>
-#include <streambuf>
-#include <iostream>
-#include <string>
 
 #include "testingFunctions.h"
 
@@ -26,18 +23,17 @@
 #  include <GL/glut.h>
 #endif
 
-Camera::Camera(float position[3], float target[3], float orientation[3], float trans_speed, float rot_sens) {
+Camera::Camera(float position[3], float target[3], float orientation[3], float transSpeed, float rot_sens) {
 
     pos = Coord(position[0], position[1], position[2]);
     tgt = Coord(target[0], target[1], target[2]);
     up = Coord(orientation[0], orientation[1], orientation[2]);
     ang = calcPitchYaw(pos, tgt); //pitch, yaw, roll
 
-    transSpeed = trans_speed;
-    rotSens = rot_sens;
+    transSpeed = transSpeed;
 }
 
-Camera::Camera(Coord Pos, Coord Target, Coord orientation, float trans_speed, float rot_sens) {
+Camera::Camera(Coord Pos, Coord Target, Coord orientation, float transSpeed, float rot_sens) {
     pos = Pos;
     tgt = Target;
     up = orientation;
@@ -75,20 +71,6 @@ int Camera::saveToFile(const std::string& filename) {
     }
     file.close();
     return 0;
-}
-
-std::vector<float> sToF(const std::string &input, char delimiter) {
-    std::vector<float> floats;
-    std::istringstream stream(input);
-    std::string token;
-
-    while (std::getline(stream, token, delimiter)) {
-        // Convert hex string to float
-        double d = std::strtod(token.c_str(), nullptr);
-        floats.push_back(static_cast<float>(d));
-    }
-
-    return floats;
 }
 
 std::vector<std::string> readFileLines(const std::string& filename) {
@@ -319,7 +301,6 @@ void Camera::relRot(Coord deltaAngle) {
     ang = tAng;
     Coord dirVec = Coord(cos(tAng.Y) * cos(tAng.X), sin(tAng.X), sin(tAng.Y) * cos(tAng.X));
     tgt = pos + dirVec;
-    dirVecPublicUsage = dirVec;
 }
 
 void Camera::updateCardInfo() {
@@ -374,7 +355,6 @@ void Camera::useDebugStringAdd(int lineInt, std::string message) {
 
 std::vector<std::string> Camera::toString(int prec) const {
     std::vector<std::string> retVal;
-#include <sstream>
     std::string* p = pos.toStrings(prec);
     std::string* t = tgt.toStrings(prec);
     std::string* u = up.toStrings(prec);
@@ -388,19 +368,5 @@ std::vector<std::string> Camera::toString(int prec) const {
     retVal.emplace_back(std::string("Pos X: " + p[0] + ", Y: " + p[1] + ", Z: " + p[2]));
     retVal.emplace_back("          Camera Info");
     return retVal;
-}
-
-std::string floatToHexString(float f) {
-    std::stringstream stream;
-    stream << std::hex << f;
-    return stream.str();
-}
-
-float hexStringToFloat(std::string s) {
-    float f;
-    std::stringstream stream;
-    stream << s;
-    stream >> std::hex >> f;
-    return f;
 }
 

@@ -144,11 +144,11 @@ enum DebugLevel {
 // this way I can pass in arrays or a Coord, since my Coords auto-cast
 inline void glTranslatefv(float in[3]) {
     glTranslatef(in[0], in[1], in[2]);
-};
+}
 
 inline void glScalefv(float in[3]) {
     glScalef(in[0], in[1], in[2]);
-};
+}
 
 #ifndef FOLDING_REGION_CUSTOM_CONSOLE
 extern float conHeightPercent;
