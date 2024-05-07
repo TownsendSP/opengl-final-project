@@ -50,10 +50,11 @@ void Flame::predraw() {
     // glEnable(GL_LIGHT0);
     // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb);
     // glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-
+    glDisable(GL_LIGHTING);
 
     brightRed.setup();
     brightRed.enable();
+
 
     //material:
     shinyRed.apply();
@@ -61,8 +62,9 @@ void Flame::predraw() {
 
 void Flame::postdraw() {
     glDisable(GL_AUTO_NORMAL);
-    glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
+
     glDisable(GL_TEXTURE_2D); // Disable texturing.
+    glDisable(GL_LIGHTING);
 }
 
 void Flame::draw() {

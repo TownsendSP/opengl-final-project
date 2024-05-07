@@ -12,7 +12,7 @@ set(TESTING_BINARY_NAME "testing")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
-find_package(GLU REQUIRED)
+
 
 include_directories(${OPENGL_INCLUDE_DIR}   ${GLUT_INCLUDE_DIRS})
 
