@@ -292,7 +292,7 @@ extern bool bufferPeeking;
 extern bool windowFocused;
 extern bool selectLock;
 extern bool selectLockingEnabled;
-
+extern bool hasCrystal;
 
 extern int animatingBlinds;
 extern int blindsProgress;

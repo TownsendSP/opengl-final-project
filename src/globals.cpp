@@ -408,7 +408,7 @@ float halltfrF[3] = {10, 4, 2};
 //Coord roomBnl = Coord(halltfrF[0], 0, 3*hallBnlF[2]);
 float roomBnlF[3] = {10, 0, -6};
 float roomtfrF[3] = {20, 4, 6};
-bool useCollision = false;
+bool useCollision = true;
 float moveSpeed = 0.5f;
 float cardDist;
 
@@ -416,6 +416,7 @@ bool bufferPeeking = false;
 bool windowFocused = false;
 bool selectLock = false;
 bool selectLockingEnabled = false;
+bool hasCrystal = false;
 
 unsigned int texture_24[NUMTEXTURES_24];
 unsigned int texture_32[NUMTEXTURES_32];

@@ -14,7 +14,7 @@
 #include "globals.h"
 #include "testingFunctions.h"
 
-
+bool cache  = false;
 float Flame::texturePoints[2][2][2] =
 {
     {{0.0, 0.0}, {0.0, 1.0}},
@@ -44,7 +44,7 @@ void Flame::predraw() {
     //lighting:
 
     // glEnable(GL_AUTO_NORMAL);
-    glEnable(GL_TEXTURE_2D);
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     // glEnable(GL_LIGHT0);
@@ -54,36 +54,31 @@ void Flame::predraw() {
 
     brightRed.setup();
     brightRed.enable();
-
-
     //material:
     shinyRed.apply();
+    glEnable(GL_TEXTURE_2D); // Disable texturing.
+
+    glBindTexture(GL_TEXTURE_2D, texture_24[textureMap_24["flame24"]]);
+    glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
 }
 
 void Flame::postdraw() {
-    glDisable(GL_AUTO_NORMAL);
+    // glDisable(GL_AUTO_NORMAL);
 
     glDisable(GL_TEXTURE_2D); // Disable texturing.
-    glDisable(GL_LIGHTING);
+    glEnable(GL_LIGHTING);
 }
 
 void Flame::draw() {
-
-
     glPushMatrix();
-    glBindTexture(GL_TEXTURE_2D, texture_24[textureMap_24["flame24"]]);
-    glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
     gluBeginSurface(nurbsObject);
     gluNurbsSurface(nurbsObject, 19, uknots, 14, vknots,
                     30, 3, controlPoints[0][0], 4, 4, GL_MAP2_VERTEX_3);
     gluNurbsSurface(nurbsObject, 4, uTextureknots, 4, vTextureknots,
                     4, 2, texturePoints[0][0], 2, 2, GL_MAP2_TEXTURE_COORD_2);
     gluEndSurface(nurbsObject);
-
-
+    gluEndSurface(nurbsObject);
     glPopMatrix();
-
-
 }
 
 
@@ -188,6 +183,7 @@ Campfire::Campfire(int numFlames, float bottomRada) {
     this -> bottomRad = bottomRada;
     for ( int i = 0; i < numFlames; i++) {
         flames.push_back(genFlame(bottomRad));
+        cacheFlame(i);
     }
 }
 
@@ -198,17 +194,24 @@ void makeLog(float rad, float len, GLUquadricObj *quadric ) {
     glPopMatrix();
 }
 
+void Campfire::cacheFlame(int i) {
+    glDeleteLists(i, 1);
+    glNewList(i, GL_COMPILE);
+    flames[i].draw();
+    glEndList();
+}
+
 void Campfire::fetchFlame(int i) {
     glPushMatrix();
     glTranslatefv(flames[i].relLoc);
     glScalefv(flames[i].scale);
     glRotatef(90, 1, 0, 0);
+    // glCallList(i);
     flames[i].draw();
     glPopMatrix();
 }
 
-void Campfire::draw() {
-
+void Campfire::drawBase() {
     hallLight.enable();
     brightRed.enable();
     // glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // Set alpha to 0.5
@@ -222,38 +225,46 @@ void Campfire::draw() {
         glPopMatrix();
     }
     gluDeleteQuadric(quadric);
+    brightRed.disable();
+}
 
+void Campfire::drawFlames() {
+    flames[0].predraw();
+    for (int i = 0; i < flames.size(); i++) {
+        glPushMatrix();
+        // glScalefv(flames[i].scale);
+        debugMap[30] = "Flame: " + std::to_string(i);
+        fetchFlame(i);
+        glPopMatrix();
+    }
+    flames[0].postdraw();
+}
+
+void Campfire::draw() {
     if (makeflames) {
         glEnable(GL_BLEND);
-        flames[0].predraw();
-        for (int i = 0; i < flames.size(); i++) {
-            glPushMatrix();
-            // glScalefv(flames[i].scale);
-            debugMap[30] = "Flame: " + std::to_string(i);
-
-            fetchFlame(i);
-
-            glPopMatrix();
-        }
-        flames[0].postdraw();
-
+        drawFlames();
     }
-    brightRed.disable();
+    drawBase();
 }
 
 void Campfire::animate() {
     // just call animate on each of the flames
     for (int i = 0; i < flames.size(); i++) {
-        if(flames[i].age * srnd(0, 1) > 100000000000000) {
+        if(flames[i].age * srnd(0, 1) > 1000) {
             flames.erase(flames.begin() + i);
             flames.emplace(flames.begin() + i, genFlame(bottomRad));
+            cacheFlame(i);
 
         } else {
             flames[i].animate();
+            cacheFlame(i);
             flames[i].resetControlPoints();
         }
     }
 }
+
+
 
 
 

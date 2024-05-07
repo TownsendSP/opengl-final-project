@@ -224,5 +224,4 @@ void setupTextures_32() {
 
 void setupTextures() {
     setupTextures_24();
-    // setupTextures_32();
 }

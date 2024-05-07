@@ -192,7 +192,7 @@ Material tableMat = Material(
     ColorData(0.2f, 0.2f, 0.2f, 1.0f),
     ColorData(0.1f,0.1f,0.1f, 1.0f),
     ColorData(Coord(149, 69, 53)/255, 1.0f),
-    10.0f);
+    0.7f);
 
 Material superShinySteel = Material(
     ColorData(0.8f, 1.0f, 1.0f, 1.0f),

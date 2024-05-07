@@ -68,22 +68,6 @@ void drawTexEgs() {
 
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-    // glDisable(GL_LIGHTING);
-
-    // std::map<std::string, int > it = textureMap_24;
-
-    // glBindTexture(GL_TEXTURE_2D, texture_24[textureMap_24["hat"]]);
-    // glPushMatrix();
-    // glTranslatef(10, 2, 10);
-    // drawHatUV();
-    // glPopMatrix();
-
-    // glDisable(GL_TEXTURE_2D);
-    // // Activate a texture_24.
-    // // std::cout << currFrame << std::endl;
-    // glEnable(GL_TEXTURE_2D);
-    //
-    // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     unsigned int* texturesLocal = texture_24;
     int thing = currFrame;
     int startext = textureMap_24["star"];
@@ -107,7 +91,7 @@ void drawTexEgs() {
     glBindTexture(GL_TEXTURE_2D, texture_24[currFrame]);
 
     glPushMatrix();
-    glTranslatef(12, 10, -5);
+    glTranslatef(0, 10, -10);
     glScalef(2, 2, 2);
     glBegin(GL_QUADS);
     glTexCoord2f(0.0, 0.0);
@@ -120,16 +104,7 @@ void drawTexEgs() {
     glVertex3f(-12.0, 6.5, 0);
     glEnd();
     glPopMatrix();
-
-    testTexturedPlane(Coord(0, 30, -5), currFrame);
-
-
+    // testTexturedPlane(Coord(0, 30, -5), currFrame);
     glDisable(GL_TEXTURE_2D);
+
 }
-
-
-
-// void drawCampfire(int numLogs, int numFlames, int numRocks) {
-//
-// }
-//

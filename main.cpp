@@ -127,23 +127,37 @@ void calculateFPS() {
 
 
 Coord crystalPos;
-bool crystalHas = false;
 
 void crystalPlace() {
     //randomize crystalPos
     crystalPos = Coord(srnd(-20, 20), 4, srnd(-20, 20));
 }
-
+bool activated = false;
 void crystalFlameInteraction() {
-    if(crystalHas) {
+    if(hasCrystal) {
         flamenoanim = false;
-        crystalHas = false;
+        hasCrystal = false;
         makeflames = true;
+        crystalPlace();
+        activated = true;
     }
     else {
-        makeflames = flamenoanim;
-        flamenoanim = !makeflames;
+        makeflames = false;
+        flamenoanim = true;
+        activated = false;
     }
+}
+
+void clipAction() {
+    if(activated) {
+        animClip = !animClip;
+    }
+    else {
+        animClip = false;
+    }
+
+
+
 }
 
 void getID(int x, int y) {
@@ -162,11 +176,11 @@ void getID(int x, int y) {
 
         break;
         case(0 << 16) | (255 << 8) | 0:
-            crystalHas = !crystalHas;
+            hasCrystal = !hasCrystal;
 
         break;
         case (0 << 16) | (0 << 8) | 255:
-            animClip = !animClip;
+            clipAction();
 
         break;
         case (255 << 16) | (0 << 8) | 255:
@@ -268,29 +282,28 @@ void drawLitShapes() {
     glShadeModel(GL_FLAT);
 
 
-    // tableMat.apply();
-    // glPushMatrix();
-    // glTranslatef(0, 1, 0);
-    // glScalef(2, 2, 2);
-    // drawModel(hatVertices, hatIndices, 36, 126);
-    // glPopMatrix();
-    //
-    //
-    // // glShadeModel(GL_FLAT);
-    // //verts: 14805
-    // //idxs: 70848
     shinyBlue.apply();
     glPushMatrix();
-    glTranslatefv(crystalPos);
-    glScalef(2, 2, 2);
+    if(hasCrystal) {
+        glTranslatefv(crystalPos);
+        glScalef(0.2, 0.2, 0.2);
+    }
+    else {
+        glTranslatefv(crystalPos);
+        glScalef(2, 2, 2);
+    }
+
     drawModel(crystalVertices, crystalIndices, 2900, 4428);
     glPopMatrix();
     glShadeModel(GL_SMOOTH);
 
+    testcampfire.drawBase();
+
     drawTexEgs();
 
-
-    testcampfire.draw();
+    if(makeflames) {
+        testcampfire.drawFlames();
+    }
     glutSwapBuffers();
 }
 
@@ -315,22 +328,6 @@ void drawUnlitShapes() {
     }
 
 
-    // testConeArot();
-
-
-    // glColor3f(1, 0, 1);
-    // glPushMatrix();
-    // glutSolidCone(1, 1, 20, 20);
-    // glPopMatrix();
-
-    // testCamBindings();
-
-    // testInRightPlace(cam);
-
-
-    // testDrawingCubes();
-    //
-    // windowTest();
     glEnable(GL_LIGHTING);
 }
 
@@ -392,7 +389,7 @@ void myPause(int pauseLength = 100) {
 
 //section  setupObjects() {
 void setupObjects() {
-    cam = Camera(Coord(1, 2, 0), Coord(2, 2, 0), Coord(0, 1, 0));
+    cam = Camera(Coord(17.76, 12, 17.70), Coord(17.10, 11.84, 17), Coord(0, 1, 0));
     debugXes.emplace_back(Coord(0, 0, 0), 100, 2);
     headLamp.enable();
 
@@ -404,9 +401,6 @@ void setupObjects() {
 
     //setup the flame
     testcampfire = Campfire(3, 10);
-
-
-
     //setup lvp class:
 }
 
@@ -545,39 +539,6 @@ void toggleMouse() {
     }
 }
 
-
-void activateDoor() {
-    switch (animateDoor) {
-        case DOOR_CLOSED_STOPPED:
-            glout << "Door Opening" << '\n';
-            animateDoor = DOOR_OPENING;
-            break;
-        case DOOR_OPENED_STOPPED:
-            glout << "Door Closing" << '\n';
-            animateDoor = DOOR_CLOSING;
-            break;
-        case DOOR_OPENING:
-            animateDoor = DOOR_OPENED_STOPPED;
-            glout << "Door Opened" << '\n';
-            break;
-        case DOOR_CLOSING:
-            glout << "Door Closed" << '\n';
-            animateDoor = DOOR_CLOSED_STOPPED;
-            break;
-        default:
-            break;
-    }
-}
-
-
-void hallLightAction() {
-    std::string hallLightState;
-    roomLight.lightswitch();
-    hallLight.lightswitch();
-    hallLightState = roomLight.enabled ? "On" : "Off";
-    glout << "Room Light switched " << hallLightState << std::endl;
-}
-
 void keyboard(unsigned char key, int x, int y) {
     modifiers = glutGetModifiers();
     std::string hallLightState;
@@ -593,11 +554,7 @@ void keyboard(unsigned char key, int x, int y) {
             cam.moveCamWithColl(Coord(0, 0, -1 * moveSpeed));
             break;
         case 'D': //CAMERA RIGHT
-            if (modifiers & GLUT_ACTIVE_ALT) {
-                hallLightAction();
-            } else {
                 cam.moveCamWithColl(Coord(0, 0, 1 * moveSpeed));
-            }
             break;
         case 'C': //CAMERA DOWN
             cam.moveCamWithColl(Coord(0, -1 * moveSpeed, 0));
@@ -742,7 +699,7 @@ void specialKeyboard(int key, int x, int y) {
             break;
         case GLUT_KEY_F4:
             headLamp.lightswitch();
-            glout << "Headlamp switched " << headLamp.enabled ? "On\n" : "Off\n";
+            glout << "Headlamp switched " << (headLamp.enabled ? "On\n" : "Off\n") << '\n';
             debugMap[60 - 20] = "Headlamp: " + headLamp.enabled ? "On" : "Off";
 
             break;
@@ -758,32 +715,25 @@ void specialKeyboard(int key, int x, int y) {
             break;
 
         case GLUT_KEY_F6:
-            activateDoor();
+            makeflames = !makeflames;
+            glout << "Flame Drawing: " << (makeflames ? "On" : "Off") << '\n';
             break;
+
+
         case GLUT_KEY_F7:
-            //if shift
-            if (modifiers & GLUT_ACTIVE_SHIFT) {
-                winner = 1;
-                glout << "Win-Cheat: " << retWinner() << "\n";
-            } else if (modifiers & GLUT_ACTIVE_ALT) {
-                winner = 0;
-                glout << "Win-Cheat: " << retWinner() << "\n";;
-            } else {
-                winner = useTimeToSeedRandomToSetWinner();
-                glout << "Win-Rand: " << retWinner() << "\n";;
+            if (shift) {
+                makeflames = flamenoanim;
+                glout << "Flame Drawing: " << (makeflames ? "On" : "Off") << '\n';
             }
+            flamenoanim = !flamenoanim;
+            glout << "Flame Animation: " << (!flamenoanim ? "On" : "Off") << '\n';
             break;
 
         case GLUT_KEY_F8:
-            if(animClip){
-                animClip = false;
-                glout << "Animation Clip: Off\n";
-            } else {
-                animClip = true;
-                glout << "Animation Clip: On\n";
-            }
-
+            animClip = !animClip;
+            glout << "Video " << (animClip ? "Playing" : "Paused") << '\n';
             break;
+
         case GLUT_KEY_F9: //call Camera::saveToFile(std::ofstream& file)
             //open file pointer for writing:
             cam.saveToFile(cameraSaveFile);
@@ -796,15 +746,7 @@ void specialKeyboard(int key, int x, int y) {
             testCharacterPrinting();
             glout << CONTROLON;
             break;
-        case GLUT_KEY_UP: // up arrow does windowBlind.open()
-            windowBlinds.open(blindAnimSpeed);
-            glout << "Blinds Opened" << '\n';
-            break;
-        case // up arrow does windowBlind.open()
-        GLUT_KEY_DOWN:
-            windowBlinds.close(blindAnimSpeed);
-            glout << "Blinds Closed" << '\n';
-            break;
+
         case GLUT_KEY_RIGHT:
             // Coord angle = Coord(0, 0.0349066, 0); //2 degrees
             // Coord angle = Coord(0, 0.0872665, 0); //5 degrees
@@ -835,9 +777,7 @@ void specialKeyboard(int key, int x, int y) {
             } else {
                 bufferPeeking = true;
             }
-
             break;
-
 
         default:
             break;
@@ -957,7 +897,6 @@ void flameAnimFn(int value) {
     if(fps!= 0) {
         if (!flamenoanim && makeflames) {
             testcampfire.animate();
-
         }
 
 
@@ -965,22 +904,17 @@ void flameAnimFn(int value) {
             animPeriod = 1000 / fps;
         }
     }
-
         glutTimerFunc(animPeriod, flameAnimFn, 1); // 60 times per second
 
     glutPostRedisplay();
 }
 
 void animateClip(int value) {
-    int animPeriod = 1000 / 7;
-    if(fps!= 0) {
+    int animPeriod = 143;
+    if(fps>= 5) {
         if(animClip){
             currFrame = (currFrame + 1) % numAnimFrames;
             debugMap[60 - 25] = "Frame: " + std::to_string(currFrame);
-        }
-
-        if(fps < animPeriod){
-            animPeriod = 1000 / fps;
         }
     }
     glutTimerFunc(animPeriod, animateClip, 1); // ANIMSPEED times per second
@@ -989,20 +923,19 @@ void animateClip(int value) {
 
 void moveCrystal() {
     // Get the camera's position
-    Coord camPos = cam.pos;
-    float camDistance = sqrt(camPos.X*camPos.X + camPos.Y*camPos.Y + camPos.Z*camPos.Z);
-    float newDistance = camDistance - 2.0f;
-    Coord normalizedCamPos = camPos / camDistance;
-    crystalPos = normalizedCamPos * newDistance;
+    Coord camTarget = cam.tgt;
+
+
+
+
+
+    crystalPos = cam.tgt;
 }
 
 void animate(int value) {
-    if(crystalHas) {
+    if(hasCrystal) {
         moveCrystal();
-
     }
-
-
     glutTimerFunc(5, animate, 1);
     glutPostRedisplay();
 }

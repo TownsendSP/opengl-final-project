@@ -86,9 +86,17 @@ public:
 
     Flame genFlame(float bottomRad);
 
+
+
     Campfire(int numFlames, float bottomRad);
 
+    void cacheFlame(int i);
+
     void fetchFlame(int i);
+
+    void drawBase();
+
+    void drawFlames();
 
     void draw();
     void animate();
