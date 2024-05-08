@@ -266,9 +266,6 @@ void Camera::getRelTrans(Coord deltaTranslation) {
 }
 
 
-
-
-
 void Camera::relTrans(Coord deltaTranslation) {
 
     float cosYaw = cos(ang.Y);

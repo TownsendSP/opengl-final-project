@@ -136,10 +136,6 @@ std::streambuf::int_type GLStreamOut::sync() {
     return 0;
 }
 
-const std::vector<std::string> &GLStreamOut::getConsole() const {
-    return glConsoleVec;
-}
-
 void GLStreamOut::rm(int n) {
     glConsoleVec.erase(glConsoleVec.begin() + n);
 }
@@ -176,10 +172,6 @@ std::streambuf::int_type GLInfo::sync() {
     return 0;
 }
 
-const std::map<int, std::string> &GLInfo::getInfo() const {
-    return glInfoMap;
-}
-
 GLInfo glStatus;
 std::ostream glInfoOut(&glStatus);
 
@@ -195,79 +187,23 @@ void addDbgPt(int idx, float xyz[3], float size, float weight) {
 
 }
 
-std::vector<thingHolder> getDbgPts() {
-    return staticPoints;
-}
-
-float *getDbgPts(int which) {
-    // if which is in the range of the vector, return it, otherwise return the first element
-    if (which >= 0 && which < staticPoints.size()) {
-        return staticPoints[which];
-    } else {
-        return staticPoints[0];
-    }
-}
-
-int getNextPoint(int current) {
-    // simply returns the index of the next point, unless the next point would be outside the bounds of the vector, in which case it returns 0
-    return current + 1 < staticPoints.size() ? current + 1 : 0;
-}
-
 //I did write these, c++ was annoying me my not letting me have the hex
 #ifndef FOLDING_REGION_WHY_CPLUSPLUS_WHY
 int_fast8_t xx8(char input) {
     return static_cast<int_fast8_t>(input);
 }
 
-char xd8(int_fast8_t input) {
-    return static_cast<char>(input);
-}
-
 int_fast16_t xx16(int input) {
     return static_cast<int_fast16_t>(input);
-}
-
-short xd16(int_fast16_t input) {
-    return static_cast<short>(input);
-}
-
-int_fast32_t xx32(long input) {
-    return static_cast<int_fast32_t>(input);
-}
-
-long xd32(int_fast32_t input) {
-    return static_cast<long>(input);
 }
 
 int_fast64_t xx64(long input) {
     return static_cast<int_fast64_t>(input);
 }
 
-long xd64(int_fast64_t input) {
-    return static_cast<long>(input);
-}
-
 std::string xs8(int_fast8_t value) {
     std::stringstream ss;
     ss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(value);
-    return ss.str();
-}
-
-std::string xs16(int_fast16_t value) {
-    std::stringstream ss;
-    ss << std::hex << std::setfill('0') << std::setw(4) << static_cast<int>(value);
-    return ss.str();
-}
-
-std::string xs32(int_fast32_t value) {
-    std::stringstream ss;
-    ss << std::hex << std::setfill('0') << std::setw(8) << static_cast<int>(value);
-    return ss.str();
-}
-
-std::string xs64(int_fast64_t value) {
-    std::stringstream ss;
-    ss << std::hex << std::setfill('0') << std::setw(16) << static_cast<int>(value);
     return ss.str();
 }
 
@@ -316,14 +252,6 @@ int useTimeToSeedRandomToSetWinner() {
     srand(rd());
     int winnera = rand() % 2;
     return winnera;
-}
-
-std::string retWinner() {
-    if (winner) {
-        return (getUName());
-    } else {
-        return (getDayOfWeek());
-    }
 }
 
 
@@ -432,3 +360,5 @@ bool showInfoViewport = true;
 
 bool makeflames = false;
 bool flamenoanim = true;
+
+int animdirnum = 0;

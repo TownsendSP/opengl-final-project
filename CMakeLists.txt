@@ -18,10 +18,7 @@ include_directories(${OPENGL_INCLUDE_DIR}   ${GLUT_INCLUDE_DIRS})
 
 add_executable(${MAIN_BINARY_NAME} main.cpp
         res/models/crystal.h
-        res/models/hat.h
         res/models/hatuv.h
-        res/models/lightsaber.h
-        res/models/obiwan.h
         src/Camera.cpp
         src/Camera.h
         src/ColorData.cpp

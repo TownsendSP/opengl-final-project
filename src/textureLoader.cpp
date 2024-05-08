@@ -21,6 +21,12 @@ int loadAnim(const std::string &directoryForFrames) {
             filenames.push_back(entry.path().filename().string());
         }
     }
+    int maxframes = numAnimFrames==0?NUMTEXTURES_24-50:numAnimFrames;
+    if(filenames.size() > maxframes) {
+        filenames.resize(maxframes);
+    }
+
+
 
     // Load each .bmp file
     int i = 0;
@@ -30,7 +36,8 @@ int loadAnim(const std::string &directoryForFrames) {
     }
     numAnimFrames = i;
     // Return the number of .bmp files
-    return filenames.size();
+    return numAnimFrames+5;
+//    return filenames.size();
 }
 
 std::string extractFileName(std::string filename) {
@@ -73,6 +80,7 @@ BitMapFile *getBMPData_24(std::string filename) {
 
     // Allocate buffer for the image.
     size = bmp->sizeX * bmp->sizeY * 24;
+
     bmp->data = new unsigned char[size];
 
     // Read bitmap data.
@@ -129,19 +137,24 @@ void loadTexture_24(std::string filename, int id) {
     textureMap_24[name] = id;
 }
 
+void loadSingleTextures24() {//load hat.bmp from TEXTUREDIR
+    loadTexture_24(TEXTUREDIR24 "hat.bmp", numAnimFrames);
+    loadTexture_24(TEXTUREDIR24 "star.bmp", numAnimFrames + 1);
+    loadTexture_24(TEXTUREDIR24 "grass.bmp", numAnimFrames + 2);
+    loadTexture_24(TEXTUREDIR24 "flame24.bmp", numAnimFrames + 3);
+    // loadTexture_24(TEXTUREDIR24 "flame24.bmp", 0);
+}
+
+// int
 void setupTextures_24() {
+    numAnimFrames = 0;
     glGenTextures(NUMTEXTURES_24, texture_24);
 
-    int numtexts = loadAnim("res/textures/animated/");
+    int numtexts = loadAnim(ANIMBASEDIR + std::to_string(animdirnum) + "/");
     std::cout << "Loaded " << numtexts << " textures" << std::endl;
-
-    // loadTexture_24("res/textures/hat.bmp", numAnimFrames);
-    loadTexture_24("res/textures/hat.bmp", numAnimFrames);
-    loadTexture_24("res/textures/star.bmp", numAnimFrames + 1);
-    loadTexture_24("res/textures/grass.bmp", numAnimFrames + 2);
-    loadTexture_24("res/textures/flame24.bmp", numAnimFrames + 3);
-    // loadTexture_24("res/textures/flame24.bmp", 0);
+    loadSingleTextures24();
 }
+
 #endif
 
 #ifndef FOLDING_REGION_32_BIT_TEXTURES

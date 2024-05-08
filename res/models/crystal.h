@@ -1,6 +1,9 @@
+struct CrystalVertex {
+    float position[3];
+    float normal[3];
+};
 
-
-ModelVertex crystalVertices[2900] = {
+CrystalVertex crystalVertices[2900] = {
 { { -2.65513f, -0.00070f, -0.00395f }, { -0.01100f, -0.38840f, 0.92140f },  },
 { { -2.65513f, -0.00070f, -0.00395f }, { 0.03620f, -0.30880f, 0.95050f },  },
 { { -2.37207f, 0.00084f, 0.00008f }, { -0.04110f, -0.41740f, 0.90780f },  },

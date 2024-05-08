@@ -76,7 +76,6 @@ public:
 
 class Campfire {
 public:
-    bool exists = true;
     std::vector<Flame> flames;
     int numFlames;
     float bottomRad;
@@ -104,8 +103,10 @@ public:
 
 
     Campfire() = default;
+
+    void modFlames(int num);
 };
 
-
+void dirtyBlend();
 
 #endif //CAMPFIREATTEMPT_H

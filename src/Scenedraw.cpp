@@ -2,6 +2,7 @@
 #include "Coord.h"
 #include "globals.h"
 #include "things.h"
+#include "fSceneObjs.h"
 
 void drawHiddenBuffer(Coord thing) {
     glDisable(GL_LIGHTING);
@@ -11,7 +12,7 @@ void drawHiddenBuffer(Coord thing) {
     glPushMatrix();
     glTranslatef(0, 10, -10);
     glScalef(2, 2, 2);
-    cubeOfPlanes(Coord(-12.0, 0, 0), Coord(12, 6.5, 0), 20, OUTSIDEOUT, ALL_FACE);
+    cubeOfPlanes(Coord(-12.0, -6.5, 0), Coord(12, 6.5, 0), 20, OUTSIDEOUT, ALL_FACE);
     glPopMatrix();
 
     //red; red box - toggles the fire
@@ -31,7 +32,8 @@ if(!hasCrystal) {
 
     glPopMatrix();
 }
-
+    glColor3f(255, 0, 255);
+    hat();
 
     glEnable(GL_LIGHTING);
 }

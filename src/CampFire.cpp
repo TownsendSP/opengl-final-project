@@ -37,6 +37,11 @@ float Flame::uTextureknots[4] = {0.0, 0.0, 12.0, 12.0};
 // void Flame::modControlPoints() {
 //
 // }
+void dirtyBlend() {
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glColor4f(1.0f, 1.0f, 1.0f, 0.5);
+}
 
 void Flame::predraw() {
     //lighting:
@@ -57,7 +62,7 @@ void Flame::predraw() {
     glEnable(GL_TEXTURE_2D); // Disable texturing.
 
     glBindTexture(GL_TEXTURE_2D, texture_24[textureMap_24["flame24"]]);
-    glColor4f(1.0f, 1.0f, 1.0f, 0.3f);
+        glColor4f(1.0f, 1.0f, 1.0f, 0.5);
 }
 
 void Flame::postdraw() {
@@ -183,9 +188,11 @@ Campfire::Campfire(int numFlames, float bottomRada) {
         flames.push_back(genFlame(bottomRad));
         cacheFlame(i);
     }
+    this -> numFlames = numFlames;
 }
 
 void makeLog(float rad, float len, GLUquadricObj *quadric) {
+    glDisable(hallLight);
     tableMat.apply();
     glPushMatrix();
     gluCylinder(quadric, rad / 0.7, rad, len, 20, 10);
@@ -200,10 +207,12 @@ void Campfire::cacheFlame(int i) {
 }
 
 void Campfire::fetchFlame(int i) {
+    float alpha = 0.5-(flames[i].age/2500);
     glPushMatrix();
     glTranslatefv(flames[i].relLoc);
     glScalefv(flames[i].scale);
     glRotatef(90, 1, 0, 0);
+    glColor4f(1.0f, 1.0f, 1.0f, alpha);
     // glCallList(i);
     flames[i].draw();
     glPopMatrix();
@@ -211,7 +220,10 @@ void Campfire::fetchFlame(int i) {
 
 void Campfire::drawBase() {
     hallLight.enable();
-    brightRed.enable();
+    if(makeflames){
+        brightRed.enable();
+    }
+    tableMat.apply();
     // glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // Set alpha to 0.5
     // draw 10 cylinders, each rotated 72 degrees
     GLUquadricObj *quadric = gluNewQuadric();
@@ -262,6 +274,25 @@ void Campfire::animate() {
     }
 }
 
+void Campfire::modFlames(int num){
+    if(numFlames == num || numFlames + num <= 0){
+        return;
+        glout << "Cannot remove more flames" << std::endl;
+    }
+    int destNum = num + numFlames;
+    while (flames.size() < destNum) {
+        flames.emplace_back(genFlame(bottomRad));
+        numFlames++;
+    }
+    std::cout << "modFlames: " << flames.size() << std::endl;
+    for(int i = 0; i < flames.size(); i++){
+        cacheFlame(i);
+    }
+    while (flames.size() > destNum) {
+        flames.pop_back();
+        numFlames--;
+    }
+}
 
 
 

@@ -18,26 +18,20 @@
 #include <string>
 #include <sstream>
 #include <map>
-#include <map>
-#include <string>
 #include <vector>
-#include <vector>
+
+
+
 
 
 
 
 int_fast8_t xx8(char input);
 int_fast16_t xx16(int input);
-int_fast32_t xx32(long input);
+
 int_fast64_t xx64(long input);
-char xd8(int_fast8_t input);
-short xd16(int_fast16_t input);
-long xd32(int_fast32_t input);
-long xd64(int_fast64_t input);
+
 std::string xs8(int_fast8_t value);
-std::string xs16(int_fast16_t value);
-std::string xs32(int_fast32_t value);
-std::string xs64(int_fast64_t value);
 
 #ifndef FOLDING_REGION_GLOBALDEFS
 
@@ -136,7 +130,6 @@ std::string xs64(int_fast64_t value);
 enum DebugLevel {
     NONE,
     WEAK,
-    STRONG,
     ALL
 };
 
@@ -169,7 +162,6 @@ protected:
     std::streambuf::int_type sync();
 
 public:
-    const std::vector<std::string> &getConsole() const;
 
     //remove message n from console vector:
     void rm(int n);
@@ -195,8 +187,6 @@ protected:
 
     std::streambuf::int_type sync();
 
-public:
-    const std::map<int, std::string> &getInfo() const;
 };
 
 extern GLInfo glStatus;
@@ -243,16 +233,11 @@ public:
     }
 };
 
-std::vector<thingHolder> getDbgPts();
-
 extern std::vector<thingHolder> staticPoints;
 
 
 void addDbgPt(int idx, float xyz[3], float size, float weight);
 
-float *getDbgPts(int which);
-
-int getNextPoint(int current);
 #endif
 
 
@@ -263,7 +248,6 @@ extern int winner;
 int useTimeToSeedRandomToSetWinner();
 std::string getDayOfWeek();
 std::string getUName();
-std::string retWinner();
 
 extern int cardRotState;
 extern int cardRotPercent;
@@ -297,14 +281,6 @@ extern bool hasCrystal;
 extern int animatingBlinds;
 extern int blindsProgress;
 
-
-//TODO: move this to the objtoh files.
-struct ModelVertex {
-    float position[3];
-    float normal[3];
-};
-
-
 #define NUMTEXTURES_24 500
 extern unsigned int texture_24[NUMTEXTURES_24];
 extern std::map<std::string, int> textureMap_24;
@@ -324,6 +300,13 @@ extern bool showInfoViewport;
 extern bool makeflames;
 extern bool playanim;
 extern bool flamenoanim;
+
+#define RESOURCEDIR "res/"
+#define TEXTUREDIR24 "res/textures/"
+#define TEXTUREDIR32 "res/textures32/"
+#define ANIMBASEDIR TEXTUREDIR24"animated"
+
+extern int animdirnum;
 
 
 

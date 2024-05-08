@@ -10,6 +10,7 @@ class fSceneObjs {
 };
 
 void drawTexEgs();
+void hat();
 
 
 #endif //FSCENEOBJS_H

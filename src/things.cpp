@@ -23,122 +23,7 @@ extern std::map<int, std::string> debugMap;
 //Window Blinds Routines
 #ifndef FOLDING_REGION_BLINDS
 
-Blinds::Blinds(float width, float height, float depth, float pitchAngle, float closedFactor) {
-    matSpecBlinds = ColorData(0.5, 0.5, 0.5, 1.0);
-    matShineBlinds[0] = 50.0f;
-    matAmbAndDifBlinds = ColorData(0.9, 0.9, 0.89, 1.0);
 
-    this->width = width;
-    this->height = height;
-    this->depth = depth;
-    this->pitchAngle = pitchAngle;
-    this->numBlades = height / depth; // NOLINT(*-narrowing-conversions)
-    this->closedFactor = 0.0;
-}
-
-
-void Blinds::drawBlade() const {
-    //scale, rotate about Z, translate
-    glPushMatrix();
-    glRotatef(pitchAngle, 0.0, 0.0, 1.0);
-    glPushMatrix();
-    glScalef(depth, bladeHeight, width);
-    glutSolidCube(1.0);
-    glPopMatrix();
-    glPopMatrix();
-}
-
-void Blinds::drawDbgPoints(DebugLevel dbg) const {
-    std::vector<Debug3Dx> points;
-    Coord topLeftFront = Coord(-depth, height, width);
-    points.emplace_back(&topLeftFront, 0.5, 1);
-    Coord bottomRightBack = Coord(depth, -height, -width);
-    points.emplace_back(&bottomRightBack, 0.5, 1);
-
-    //if Strong or all, draw a point for each of the blades's centers
-
-
-    // if debug == all, draw the bounding box for the bounding box for the blind apparatus
-    if (dbg == ALL) {
-        glDisable(GL_LIGHTING);
-        glColor3f(0.9, 0.9, 0.9);
-        glEnable(GL_LINE_STIPPLE);
-        glLineWidth(2);
-
-        glPushMatrix();
-        glTranslatef(0.0, height / 2, 0.0);
-        glScalef(depth, height, width);
-        glutWireCube(1.0);
-        glPopMatrix();
-
-        glLineWidth(1);
-        glDisable(GL_LINE_STIPPLE);
-        glEnable(GL_LIGHTING);
-    }
-
-    glPushMatrix();
-    glDisable(GL_LIGHTING);
-    for (auto &point: points) {
-        point.draw();
-    }
-    glEnable(GL_LIGHTING);
-    glPopMatrix();
-}
-
-void Blinds::draw(DebugLevel dbg) const {
-    // Set material properties.
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecBlinds);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, matShineBlinds);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matAmbAndDifBlinds);
-
-    float bladeSpacing = depth * closedFactor + bladeHeight / 2;
-    float topBladeHeight = height - bladeSpacing;
-    glPushMatrix();
-    for (int i = 0; i < numBlades; i++) {
-        // bool isBladeOpened = closedFactor * numBlades < i; // NOLINT(*-narrowing-conversions)
-        glPushMatrix();
-        glTranslatef(0.0, topBladeHeight - ((i - 1) * bladeSpacing), 0.0);
-        drawBlade();
-        glPopMatrix();
-    }
-    glPopMatrix();
-
-    drawDbgPoints(dbg);
-
-    if (debug_string_add_map_ != nullptr) {
-        (*debug_string_add_map_)[60-17] = "Blinds State: " + std::to_string(closedFactor);
-        (*debug_string_add_map_)[60-18] = "Blade Spacing: " + std::to_string(bladeSpacing);
-        (*debug_string_add_map_)[60-19] = "Num Blades: " + std::to_string(numBlades);
-    }
-}
-
-void drawBlinds(Blinds blindIn) {
-    // Set material properties.
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, blindIn.matSpecBlinds);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, blindIn.matShineBlinds);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, blindIn.matAmbAndDifBlinds);
-}
-
-void Blinds::open(float amt) {
-    closedFactor = closedFactor - amt < 0.0 ? 0.0 : closedFactor - amt;
-}
-
-void Blinds::close(float amt) {
-    closedFactor = closedFactor + amt > 1.0 ? 1.0 : closedFactor + amt;
-}
-
-void Blinds::animate(float amt) {
-    float current = closedFactor;
-    if (opening) {
-        current -= amt;
-        opening = current > 0.0;
-        closedFactor = current >= 0.0 ? current : 0.0;
-    } else {
-        current += amt;
-        opening = current < 1.0;
-        closedFactor = current <= 1.0 ? current : 1.0;
-    }
-}
 #endif
 
 
@@ -262,6 +147,7 @@ void drawFlatPlaneXZ(Coord corner1, Coord corner2, int numSubDivisions) { //plan
     float zStep = (corner2.Z - corner1.Z) / numSubDivisions; // NOLINT(*-narrowing-conversions)
 
     // Draw the grid of triangle strips
+
     for (int i = 0; i < numSubDivisions; ++i) {
         glBegin(GL_TRIANGLE_STRIP);
         for (int j = 0; j <= numSubDivisions; ++j) {

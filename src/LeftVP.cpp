@@ -34,7 +34,6 @@ extern int height;
 //     }
 // }
 
-int mNum = 0;
 float rposX = 3;
 
 void processConsoleMsgs() {

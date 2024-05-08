@@ -33,6 +33,8 @@
 #  include <GLUT/glut.h>
 #else
 #  include <GL/glut.h>
+#include <vector>
+
 #endif
 
 using namespace std;
@@ -50,6 +52,7 @@ struct BitMapFile {
     unsigned char *data;
 };
 
+GLuint texture[2]; // Array of texture indices.
 // Routine to read a bitmap file.
 // Works only for uncompressed bmp files of 24-bit color.
 BitMapFile *getBMPData_24(string filename) {
@@ -240,27 +243,42 @@ void specialKeyInput(int key, int x, int y) {
 }
 
 // Routine to output interaction instructions to the C++ window.
+#define B "\x1b[1;31m"
+#define R "\x1b[0m;"
+// use b to bold text
+std::vector<std::string> gameplayVec = {
+        "     Gameplay: ",
+        "Find the blue crystal",
+        "Pick it up by clicking it",
+        "Bring it to the campfire",
+        "while holding the crystal, light the campfire",
+        "	by clicking the campfire",
+        "Now, you can play the movie onscreen"
+};
+
+
 void printInteraction(void) {
-    cout << "Interaction:" << endl;
-    cout << "Press the left and right arrow keys to rotate the square." << endl
-            << "Press space to toggle between textures." << endl
-            << "Press delete to reset." << endl;
+    for (const std::string &i: gameplayVec) {
+        std::cout << i << '\n';
+    }
 }
 
 // Main routine.
 int main(int argc, char **argv) {
-    printInteraction();
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(500, 500);
-    glutInitWindowPosition(100, 100);
-    glutCreateWindow("loadTextures.cpp");
-    setup();
-    glutDisplayFunc(drawScene);
-    glutReshapeFunc(resize);
-    glutKeyboardFunc(keyInput);
-    glutSpecialFunc(specialKeyInput);
-    glutMainLoop();
+    std::cout << B << "Hello, " << R << "World!" << std::endl;
+//    printInteraction();
+//    glutInit(&argc, argv);
+//    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+//    glutInitWindowSize(500, 500);
+//    glutInitWindowPosition(100, 100);
+//    glutCreateWindow("loadTextures.cpp");
+//    setup();
+//    glutDisplayFunc(drawScene);
+//    glutReshapeFunc(resize);
+//    glutKeyboardFunc(keyInput);
+//    glutSpecialFunc(specialKeyInput);
+//    glutMainLoop();
+
 
     return 0;
 }

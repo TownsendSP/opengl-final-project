@@ -35,5 +35,7 @@ void loadTexture_32(std::string filename, int id);
 int loadAnim(const std::string &directoryForFrames);
 
 void setupTextures();
+void loadSingleTextures24();
+void setupTextures_24();
 
 #endif //TGSOUTHAFINALPROJECT_TEXTURELOADER_H

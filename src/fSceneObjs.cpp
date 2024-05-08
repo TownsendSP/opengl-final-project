@@ -19,6 +19,8 @@
 
 #include "Coord.h"
 #include "testingFunctions.h"
+#include "modelLoader.h"
+#include "lighting.h"
 
 
 void testTexturedPlane(Coord locPostTrans, int properTexture) {
@@ -56,8 +58,16 @@ void makeGround() {
     glPopMatrix();
 }
 
+void hat() {
+    castIronMat.apply();
+    glPushMatrix();
+    glTranslatef(20, 5, 20);
+    glBindTexture(GL_TEXTURE_2D, texture_24[textureMap_24["hat"]]);
+    drawHatUV();
+    glPopMatrix();
+}
+
 void drawTexEgs() {
-    glDisable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
 
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -72,20 +82,20 @@ void drawTexEgs() {
 
 
     // testTexturedPlane(Coord(30, 10, -5), startext);
-    glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, texture_24[baTest]);
 
-    // Map the texture_24 onto a square polygon.
+    grassGreen.apply();
+    glPushMatrix();
     makeGround();
-
-    // testTexturedPlane(Coord(0, 10, -5), hatTx);
     glPopMatrix();
 
+    hat();
 
+    glDisable(GL_LIGHTING);
     glBindTexture(GL_TEXTURE_2D, texture_24[currFrame]);
 
     glPushMatrix();
-    glTranslatef(0, 10, -10);
+    glTranslatef(0, 14, -10);
     glScalef(2, 2, 2);
     glBegin(GL_QUADS);
     glTexCoord2f(0.0, 0.0);

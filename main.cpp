@@ -1,3 +1,4 @@
+
 #ifdef __APPLE__
 # include <GLUT/glut.h>
 #else
@@ -13,9 +14,9 @@
 #include <random>
 #include <string>
 #include <map>
+#include <filesystem>
 
 //My Imports and Defines
-
 
 #include "src/Coord.h"
 #include "src/Camera.h"
@@ -25,12 +26,12 @@
 #include "src/lighting.h"
 #include "src/LeftVP.h"
 
-#include "res/models/crystal.h"
 #include "src/Scenedraw.h"
 #include "src/textureLoader.h"
 #include "src/fSceneObjs.h"
 
 #include "src/CampFire.h"
+#include "src/modelLoader.h"
 
 
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
@@ -49,7 +50,7 @@ int height = 701;
 #ifndef FOLDING_REGION_Global_Objects
 Camera cam = Camera();
 std::vector<Debug3Dx> debugXes;
-Blinds windowBlinds;
+
 
 
 #endif
@@ -63,17 +64,34 @@ bool useMouse = false;
 bool started = false;
 
 
-float sensitivity = 0.01f; // camera movement and mouse sensitivity
-float blindAnimSpeed = 0.05;
+float sensitivity = 0.01f;
 
-bool drawDebugPoints = false;
-//function pointer to infoVP addDebugString
+
 
 std::map<int, std::string> debugMap;
 
 int alt, ctrl, modifiers, shift;
-bool showKeybinds = true;
 std::vector<std::string> instructionVec = {
+        "     Gameplay: ",
+        "Find the blue crystal",
+        "Pick it up by clicking it",
+        "Bring it to the campfire",
+        "while holding the crystal, light the campfire",
+        "	by clicking the campfire",
+        "Now, you can play the movie onscreen"
+
+
+};
+
+
+std::vector<std::string> gameplayVec = {
+        "     Gameplay: ",
+        "Find the blue crystal",
+        "Pick it up by clicking it",
+        "Bring it to the campfire",
+        "while holding the crystal, light the campfire",
+        "	by clicking the campfire",
+        "Now, you can play the movie onscreen"
 };
 
 //mid-dark grey, kinda like blender's default background
@@ -87,7 +105,6 @@ ColorData solarizedText = ColorData(0.71373, 0.58039, 0.58824, 1.0);
 Campfire testcampfire;
 
 DebugLevel defaultDebug = WEAK;
-bool detachSpotlight = false;
 //variables for FPS Counter:
 
 bool animClip = false;
@@ -95,9 +112,6 @@ bool animClip = false;
 #endif
 
 #ifndef FOLDING_REGION_MATERIALS
-
-//section materials and lights
-Light fakeSun;
 
 int frame = 0;
 auto prevTime = std::chrono::high_resolution_clock::now();
@@ -132,34 +146,43 @@ void crystalFlameInteraction() {
         makeflames = true;
         crystalPlace();
         activated = true;
+        glout << "The fire is lit, enjoy the movie" << '\n';
     }
     else {
-        makeflames = false;
-        flamenoanim = true;
-        activated = false;
+        if(activated) {
+            makeflames = false;
+            flamenoanim = true;
+            activated = false;
+            glout << "The fire is out" << '\n';
+        }
+        else{
+            glout << "You need the crystal to light the fire" << '\n';
+        }
     }
 }
 
 void clipAction() {
     if(activated) {
         animClip = !animClip;
+        glout << "Movie " << (animClip ? "Playing" : "Paused") << '\n';
     }
     else {
+        if(animClip){
+            glout << "Movie stopped. You need to light the fire again" << '\n';
+        } if(hasCrystal) {
+            glout << "You need to light the fire first" << '\n';
+        } else {
+            glout << "Find the crystal first" << '\n';
+        }
         animClip = false;
     }
-
-
-
 }
 
 void getID(int x, int y) {
     unsigned char pixel[3];
     glReadPixels(x, y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixel);
-    //printed only for demonstration
-    glout << "Pixel at (" << x << ", " << y << "): R: "
-            << (int) pixel[0] << " G: " << (int) pixel[1] << " B: " << (int) pixel[2] << std::endl;
-
     int pixeli[3] = {(int) pixel[0], (int) pixel[1], (int) pixel[2]};
+
     int pixela = pixeli[0] << 16 | pixeli[1] << 8 | pixeli[2];
     switch (pixela) {
 
@@ -169,6 +192,7 @@ void getID(int x, int y) {
         break;
         case(0 << 16) | (255 << 8) | 0:
             hasCrystal = !hasCrystal;
+            glout << "Crystal " << (hasCrystal ? "Picked Up" : "Dropped") << '\n';
 
         break;
         case (0 << 16) | (0 << 8) | 255:
@@ -176,12 +200,14 @@ void getID(int x, int y) {
 
         break;
         case (255 << 16) | (0 << 8) | 255:
-
+            glout << "That's the Hat!" << '\n';
+            loadSingleTextures24();
         break;
         default:
             return;
     }
 }
+
 
 void updateSpotlight() {
     headLamp.setup();
@@ -227,24 +253,24 @@ void setupRight() {
 }
 
 
-void drawModel(ModelVertex modelVertices[], unsigned int modelIndices[], int numVertices, int numIndices) {
-    //enabling drawing with the drawing the loadedArrays
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
+void finalCrystal() {
 
-    //give it the pointers
-    glVertexPointer(3, GL_FLOAT, sizeof(ModelVertex), &modelVertices[0].position[0]);
-    glNormalPointer(GL_FLOAT, sizeof(ModelVertex), &modelVertices[0].normal[0]);
 
-    //draw it using those pointers
-    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, modelIndices);
 
-    //exit the vertex and normal mode
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
+    shinyBlue.apply();
+    glPushMatrix();
+    glShadeModel(GL_FLAT);
+    if(hasCrystal) {
+        glTranslatefv(crystalPos);
+        glScalef(0.2, 0.2, 0.2);
+    }
+    else {
+        glTranslatefv(crystalPos);
+        glScalef(2, 2, 2);
+    }
+    drawCrystal();
+    glPopMatrix();
 }
-
-
 
 void drawLitShapes() {
     glEnable(GL_LIGHTING);
@@ -260,38 +286,33 @@ void drawLitShapes() {
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
     glEnable(GL_LIGHT0);
-    headLamp.disable();
-    // sunLight.enable();
-    // glEnable(GL_LIGHT_MODEL_AMBIENT);
+
+     sunLight.enable();
+     glEnable(GL_LIGHT_MODEL_AMBIENT);
     //smooth shading
     glShadeModel(GL_SMOOTH);
 
 
-    glShadeModel(GL_FLAT);
-
-
-    shinyBlue.apply();
-    glPushMatrix();
-    if(hasCrystal) {
-        glTranslatefv(crystalPos);
-        glScalef(0.2, 0.2, 0.2);
-    }
-    else {
-        glTranslatefv(crystalPos);
-        glScalef(2, 2, 2);
-    }
-
-    drawModel(crystalVertices, crystalIndices, 2900, 4428);
-    glPopMatrix();
-    glShadeModel(GL_SMOOTH);
+    finalCrystal();
 
     testcampfire.drawBase();
 
     drawTexEgs();
 
+
     if(makeflames) {
         testcampfire.drawFlames();
     }
+    else{
+        dirtyBlend();
+    }
+//    floorMat.apply();
+
+
+    glDisable(GL_TEXTURE_2D);
+    wallMat.apply();
+    drawPlane(Coord(-50, 0.2, -50), Coord(50, 0.2, 50), Coord(0,1,0), 200);
+
     glutSwapBuffers();
 }
 
@@ -318,8 +339,6 @@ void drawUnlitShapes() {
 
     glEnable(GL_LIGHTING);
 }
-
-
 
 void drawWindow() {
     if (showInfoViewport) {
@@ -357,15 +376,13 @@ void drawWindow() {
 #endif
 
 #ifndef FOLDING_REGION_UTILITY_AND_SETUP
-//section setup
-bool shownKeybinds = false;
 // fps function
 
 void showKeybindings() {
     glout << NOPREFIX;
     glout << CLEARALL;
     glout << MAX;
-    for (const std::string &i: instructionVec) {
+    for (const std::string &i: gameplayVec) {
         glout << i << '\n';
     }
 }
@@ -376,14 +393,13 @@ void setupObjects() {
     debugXes.emplace_back(Coord(0, 0, 0), 100, 2);
     headLamp.enable();
 
-    // headLamp.setup();
-
     //giving them access to the debugging info map
     cam.setDebugStringAdd(&debugMap);
     // windowBlinds.setDebugStringAdd(&debugMap);
 
     //setup the flame
     testcampfire = Campfire(3, 10);
+    testcampfire.animate();
     //setup lvp class:
 }
 
@@ -445,6 +461,7 @@ void setup() {
     //glListallEnabled:
     setupTextures();
     setupObjects();
+    setupLights();
     if(showInfoViewport) {
         glClearColor(rVPColorData.R, rVPColorData.G, rVPColorData.B, rVPColorData.A);
     }else {
@@ -466,8 +483,8 @@ void resize(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 #endif
-//endsection setup
-//control
+
+
 #ifndef FOLDING_REGION_Control
 
 void mouseControl(int button, int state, int x, int y) {
@@ -527,22 +544,22 @@ void keyboard(unsigned char key, int x, int y) {
     std::string hallLightState;
 
     switch (key) {
-        case 'W': //CAMERA FORWARD
+        case 'w': //CAMERA FORWARD
             cam.moveCamWithColl(Coord(1 * moveSpeed, 0, 0));
             break;
-        case 'S': //CAMERA BACKWARD
+        case 's': //CAMERA BACKWARD
             cam.moveCamWithColl(Coord(-1 * moveSpeed, 0, 0));
             break;
-        case 'A': //CAMERA LEFT
+        case 'a': //CAMERA LEFT
             cam.moveCamWithColl(Coord(0, 0, -1 * moveSpeed));
             break;
-        case 'D': //CAMERA RIGHT
+        case 'd': //CAMERA RIGHT
                 cam.moveCamWithColl(Coord(0, 0, 1 * moveSpeed));
             break;
-        case 'C': //CAMERA DOWN
+        case 'c': //CAMERA DOWN
             cam.moveCamWithColl(Coord(0, -1 * moveSpeed, 0));
             break;
-        case 'F': //CAMERA UP
+        case 'f': //CAMERA UP
             cam.moveCamWithColl(Coord(0, 1 * moveSpeed, 0));
             break;
         case ' ': //Toggle Mouse control of Camera
@@ -604,15 +621,6 @@ void keyboard(unsigned char key, int x, int y) {
         case '%': cam.storeState(4);
             glout << "State5:" << "Pos:" << cam.pos.toString(0) << " Cam Tgt " << cam.tgt.toString(0) << '\n';
             break;
-        case '`':
-            if (modifiers & GLUT_ACTIVE_ALT) {
-                enabledFaces = enabledFaces | ALL_FACE;
-                glout << "All Faces Enabled" << '\n';
-            } else {
-                dbgNormals = nextDbgState();
-                glout << "NormalColorization: " << dbgNormMap[dbgNormals] << '\n';
-            }
-            break;
         case 'G':
             globAmb[0] = clmp(globAmb[0] + 0.01, 0.0, 1.0);
             globAmb[1] = clmp(globAmb[1] + 0.01, 0.0, 1.0);
@@ -624,9 +632,16 @@ void keyboard(unsigned char key, int x, int y) {
             globAmb[1] = clmp(globAmb[1] - 0.01, 0.0, 1.0);
             globAmb[2] = clmp(globAmb[2] - 0.01, 0.0, 1.0);
             glout << "Global Ambient Light: " << globAmb[0] << ", " << globAmb[1] << ", " << globAmb[2] << '\n';
-
-
             break;
+        case '[':
+            testcampfire.modFlames(-1);
+            glout << "Removed Flame" << '\n';
+            break;
+        case ']':
+            testcampfire.modFlames(1);
+            glout << "Added Flame" << '\n';
+            break;
+
         case '?': //print keybinds:
             showKeybindings();
             break;
@@ -680,11 +695,12 @@ void specialKeyboard(int key, int x, int y) {
             conHeightPercent = clmp(conHeightPercent + 0.02, 0.0, 0.52);
             glout << "Grew console to " << conHeightPercent << '\n';
             break;
+
         case GLUT_KEY_F4:
             headLamp.lightswitch();
-            glout << "Headlamp switched " << (headLamp.enabled ? "On\n" : "Off\n") << '\n';
-
+            glout << "Headlamp: " << (headLamp.enabled ? "On" : "Off") << '\n';
             break;
+
         case GLUT_KEY_F5:
             cam.loadFromFile(cameraSaveFile);
 
@@ -766,21 +782,32 @@ void specialKeyboard(int key, int x, int y) {
     }
     glutPostRedisplay();
 }
+
 #endif
 
+void cheatythread(){
+
+}
 
 void menu(int id) {
     switch (id) {
         case 2: flamenoanim = !flamenoanim;
-        glout << "flame animation toggled" << '\n';
+        glout << "Flame Animation " << (!flamenoanim ? "Enabled" : "Disabled") << '\n';
         break;
         case 3: animClip = !animClip;
-        glout << "Video toggled " << '\n';
+        glout << "Video " << (animClip ? "Playing" : "Paused") << '\n';
         break;
         case 4: makeflames = !makeflames;
-        glout << "toggled Flames " << '\n';
+        glout << "Flames" <<( makeflames? "Enabled" : "Disabled") << '\n';
         break;
-
+        case 5:
+            glout << "Loading Next Video" << '\n';
+            std::string nextPath = ANIMBASEDIR + std::to_string(animdirnum + 1) + "/";
+            std::filesystem::exists(nextPath) && std::filesystem::is_directory(nextPath);
+            animdirnum++;
+            //manually free the memory
+            setupTextures_24();
+            break;
     }
 }
 
@@ -796,11 +823,13 @@ void top_menu(int id) {
 }
 
 
+
 void makeMenu(void) {
     int menui = glutCreateMenu(menu);
     glutAddMenuEntry("Toggle Flame Animation", 2);
-    glutAddMenuEntry("Video toggled", 3);
-    glutAddMenuEntry("Disable Flames", 4);
+    glutAddMenuEntry("Toggle Flames", 3);
+    glutAddMenuEntry("Video toggled", 4);
+    glutAddMenuEntry("Next Video", 5);
 
 
     glutCreateMenu(top_menu);
@@ -813,49 +842,8 @@ void makeMenu(void) {
 
 #ifndef FOLDING_REGION_ANIMATION
 
-
-//section ANIMATION
-float cardDistFun() {
-    cardDist = cam.pos.dist(Coord(18.6000004, 1.84333336, 0.25));
-    return cardDist;
-}
-
-void doorAnimate() {
-    if (animateDoor == DOOR_OPENING) {
-        doorOpenPercent += 1;
-        if (doorOpenPercent >= 100) {
-            animateDoor = DOOR_OPENED_STOPPED;
-            doorOpenPercent = 100;
-        }
-    } else if (animateDoor == DOOR_CLOSING) {
-        doorOpenPercent -= 1;
-        if (doorOpenPercent <= 0) {
-            animateDoor = DOOR_CLOSED_STOPPED;
-            doorOpenPercent = 0;
-        }
-    }
-}
-
-void cardAnimate() {
-    if (cardRotState == CARD_ROT_NOW) {
-        // cardRotState++;
-        cardRotPercent++;
-        if (cardRotPercent >= 100 * cardRotSpeed) {
-            cardRotState = CARD_ROT_COMPLETE;
-            // glout << "Card Done!" << std::endl;
-        }
-    } else if (cardRotState == CARD_ROT_UNDO) {
-        cardRotPercent--;
-        if (cardRotPercent <= 0) {
-            cardRotState = CARD_ROT_NONE;
-            winner = useTimeToSeedRandomToSetWinner();
-            // glout << "Card Done!" << std::endl;
-        }
-    }
-}
-
 int peek = 0;
-int numPeeks = 1000;
+int numPeeks = 200;
 
 void peekHiddenBuffer() {
     //peek the hidden buffer for numPeeks iterations of the animation function:
@@ -893,7 +881,7 @@ void flameAnimFn(int value) {
 }
 
 void animateClip(int value) {
-    int animPeriod = 143;
+    int animPeriod = 100;
     if(fps>= 5) {
         if(animClip){
             currFrame = (currFrame + 1) % numAnimFrames;
@@ -916,14 +904,27 @@ void moveCrystal() {
 }
 
 void animate(int value) {
+
     if(hasCrystal) {
         moveCrystal();
+    }
+    if(bufferPeeking) {
+        peekHiddenBuffer();
     }
     glutTimerFunc(5, animate, 1);
     glutPostRedisplay();
 }
 #endif
 
+void printinstructionsfromtxt() {
+    std::ifstream file(RESOURCEDIR "/instructions.txt");
+    if (!file) {return;}
+    std::string line;
+    while (std::getline(file, line)) {
+        std::cout << line << std::endl;
+    }
+    file.close();
+}
 
 int main(int argc, char **argv) {
     glutInit(&argc, argv);
@@ -932,7 +933,7 @@ int main(int argc, char **argv) {
     glutInitWindowPosition(10, 100);
     glutCreateWindow("Scene Display Window");
     setup();
-    // setupObjects();
+
     glutDisplayFunc(drawWindow);
     glutReshapeFunc(resize);
     glutKeyboardFunc(keyboard);
@@ -946,10 +947,7 @@ int main(int argc, char **argv) {
     glutTimerFunc(1000 / ANIMSPEED, animateClip, 1);
 
 
-
-    for (const std::string &i: instructionVec) {
-        std::cout << i << '\n';
-    }
+    printinstructionsfromtxt();
 
     glutMainLoop();
     return 0;

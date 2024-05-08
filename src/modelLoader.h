@@ -8,16 +8,16 @@
 
 #include <string>
 
+
 class modelLoader {
     std::string fileName;
     bool hasUVs;
     bool hasNormals;
     int numVerts;
     int numIndices;
-
-
 };
 
 void drawHatUV();
+void drawCrystal();
 
 #endif //TGSOUTHAFINALPROJECT_MODELLOADER_H

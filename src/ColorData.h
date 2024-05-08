@@ -33,12 +33,6 @@ public:
         A = a;
     }
 
-    // ColorData(int r, int g, int b, float a, uint8_t conv = NOCONVERT) {
-    //         R = conv?(r/ 255.0):r;
-    //         G = conv?(g/ 255.0):g;
-    //         B = conv?(b/ 255.0):b;
-    //         A = a;
-    // }
     ColorData(uint32_t hexColor, float a) {
         R = ((hexColor >> 16) & 0xFF) / 255.0;
         G = ((hexColor >> 8) & 0xFF) / 255.0;
@@ -229,9 +223,6 @@ public:
         return new GLfloat[4]{R, G, B, A};
     }
 
-    // operator GLfloat*() const {
-    //     return new GLfloat[4]{R, G, B, A};
-    // }
 
     operator float *() const {
         return new float[4]{R, G, B, A};

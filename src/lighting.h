@@ -30,9 +30,9 @@ public:
     lightNum whichLight;
 
 
-    Light(lightNum whichLighta, ColorData pos, ColorData amb, ColorData diff, ColorData spec);;
+    Light(lightNum whichLighta, ColorData pos, ColorData amb, ColorData diff, ColorData spec);
 
-    Light(lightNum whichLighta, ColorData pos, ColorData amb, ColorData diffspec);;
+    Light(lightNum whichLighta, ColorData pos, ColorData amb, ColorData diffspec);
 
     void setup();
 
@@ -40,9 +40,9 @@ public:
 
     void disable() const;
 
-    void lightswitch();;
+    void lightswitch();
 
-    void lightswitch(bool onoff);;
+    void lightswitch(bool onoff);
 
 
     // define a cast so I can use the light in glEnable
@@ -61,15 +61,13 @@ public:
     Spotlight(lightNum whichLight, ColorData pos, ColorData amb, ColorData diff, ColorData spec, ColorData dir,
               float cutoff, float exponent);;
     Spotlight(lightNum whichLight, ColorData pos, ColorData amb, ColorData diff, ColorData spec, Coord dir,
-              float cutoff, float exponent);;
-
+              float cutoff, float exponent);
     Spotlight();
 
     Spotlight(Light i, Coord dir, float cutoff, float exponent);
 
     void setup();
 
-    void drawVis();
 };
 
 
@@ -89,8 +87,7 @@ private:
 public:
     //constructor:
 
-    Material(ColorData spec, ColorData amb, ColorData diff, ColorData emission, float shine);;
-
+    Material(ColorData spec, ColorData amb, ColorData diff, ColorData emission, float shine);
     Material(ColorData spec, ColorData amb, ColorData diff, float shine);
 
     //applyMaterial:
@@ -109,7 +106,7 @@ extern Material tableMat;
 extern Material superShinySteel;
 extern Material matteConcrete;
 extern Material shinyRed;
-extern Material shinyGreen;
+extern Material grassGreen;
 extern Material shinyBlue;
 
 

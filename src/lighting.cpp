@@ -83,37 +83,6 @@ void Spotlight::setup() {
     glLightf(whichLight, GL_SPOT_EXPONENT, spotAttenuation);
 }
 
-void Spotlight::drawVis() {
-    // // Rotate to match the direction of the spotlight
-    // // Assuming spotDir is a direction vector, we need to convert it to an angle and an axis
-    // float angle = acos(spotDir[2]); // Angle with the z-axis
-    //
-    //
-    // float coneHeight = 12.0; // Height of the cone
-    // //calc cone radius based on cutoff angle
-    // float coneRadius = coneHeight * tan(spotAngle * (PI / 180.0)); // Radius of the cone
-    //
-    //
-    //
-    // glPushMatrix(); // Save matrix state
-    //
-    // // Translate to the position of the spotlight
-    // glTranslatef(lightPos[0], lightPos[1], lightPos[2]);
-    //
-    //
-    // glRotatef(angle * (180.0 / PI), -spotDir[1] / axisLength, 0, spotDir[0] / axisLength); // Rotate around the cross product of the direction and the z-axis
-    //
-    // // Set the color and transparency of the material
-    // glColor4f(lightDiff[0], lightDiff[1], lightDiff[2], 0.2); // 20% opaque
-    //
-    // // Draw the cone
-    // // Assuming the base radius and height of the cone are 1. Adjust these values as needed.
-    // // Also assuming we have a suitable level of detail for the cone. Adjust these values as needed.
-    // glutSolidCone(1, 1, 20, 20);
-    //
-    // glPopMatrix(); // Restore matrix state
-}
-
 
 Material::Material(ColorData spec, ColorData amb, ColorData diff, ColorData emission, float shine) {
     matSpec = spec;
@@ -148,11 +117,11 @@ Material wallMat = Material(
     ColorData(0.8f, 0.8f, 0.8f, 1.0f),
     10.0f);
 
-Material floorMat = Material( //pale brown color
-    ColorData(0.8f, 0.6f, 0.4f, 1.0f),
-    ColorData(0.2f, 0.2f, 0.2f, 1.0f),
-    ColorData(0.8f, 0.6f, 0.4f, 1.0f),
-    33.0f); //just a bit glossy
+Material floorMat = Material(
+    ColorData(1.0f, 1.0f, 1.0f, 0.3f),
+    ColorData(0.0f, 0.0f, 0.0f, 0.0f),
+    ColorData(0.2f, 0.6f, 0.12f, 0.1f),
+    111.1f);
 
 
 Material ceilingMat = Material( //matte cream color
@@ -189,10 +158,10 @@ Material castIronMat = Material( // nearly black, metallic
 
 //shiny dark brown texture_24 for table
 Material tableMat = Material(
-    ColorData(0.2f, 0.2f, 0.2f, 1.0f),
+    ColorData(0.05f, 0.05f, 0.05f, 1.0f),
     ColorData(0.1f,0.1f,0.1f, 1.0f),
-    ColorData(Coord(149, 69, 53)/255, 1.0f),
-    0.7f);
+    ColorData(Coord(130, 69, 53)/255, 1.0f),
+    0.07f);
 
 Material superShinySteel = Material(
     ColorData(0.8f, 1.0f, 1.0f, 1.0f),
@@ -213,11 +182,11 @@ Material shinyRed = Material(
     ColorData(1.0f, 0.0f, 0.0f, 1.0f), //diffuse
     10.0f); //shininess
 
-Material shinyGreen = Material(
-    ColorData(1.0f, 1.0f, 1.0f, 1.0f), //specular
-    ColorData(0.2f, 0.2f, 0.2f, 1.0f), //ambient
-    ColorData(0.0f, 1.0f, 0.0f, 1.0f), //diffuse
-    100.0f); //shininess
+Material grassGreen = Material(
+    ColorData(0.2f, 0.3f, 0.3f, 1.0f), //specular
+    ColorData(0.1f, 0.2f, 0.2f, 1.0f), //ambient
+    ColorData(0.1f, 1.0f, 0.2f, 1.0f), //diffuse
+    50.0f); //shininess
 
 Material shinyBlue = Material(
     ColorData(0.4f, 0.4f, 1.0f, 1.0f), //specular
@@ -311,5 +280,5 @@ Light sunLight = Light( //directional sunlight, high in the sky
     Light::LIGHT2,
     ColorData(1.0f, 1.0f, 1.0f, 0.0f), //pos
     ColorData(0.2f, 0.2f, 0.2f, 1), //amb
-    ColorData(1.0f, 1.0f, 1.0f, 1.0f), //diff
-    ColorData(1.0f, 1.0f, 1.0f, 1.0f)); //spec
+    ColorData(0.3f, 0.3f, 0.3f, 1.0f), //diff
+    ColorData(0.3f, 0.3f, 0.3f, 1.0f)); //spec
