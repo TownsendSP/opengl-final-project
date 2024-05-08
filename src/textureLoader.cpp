@@ -137,12 +137,12 @@ void loadTexture_24(std::string filename, int id) {
     textureMap_24[name] = id;
 }
 
-void loadSingleTextures24() {//load hat.bmp from TEXTUREDIR
-    loadTexture_24(TEXTUREDIR24 "hat.bmp", numAnimFrames);
-    loadTexture_24(TEXTUREDIR24 "star.bmp", numAnimFrames + 1);
-    loadTexture_24(TEXTUREDIR24 "grass.bmp", numAnimFrames + 2);
-    loadTexture_24(TEXTUREDIR24 "flame24.bmp", numAnimFrames + 3);
-    // loadTexture_24(TEXTUREDIR24 "flame24.bmp", 0);
+void loadSingleTextures24() {
+    for (int i = 0; i < texturefiles.size(); i++) {
+        loadTexture_24(TEXTUREDIR24 + texturefiles[i] + ".bmp", numAnimFrames + i );
+    }
+
+
 }
 
 // int

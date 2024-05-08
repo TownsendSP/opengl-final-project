@@ -143,39 +143,6 @@ void GLStreamOut::rm(int n) {
 GLStreamOut glConsole;
 std::ostream glout(&glConsole);
 
-
-std::streambuf::int_type GLInfo::overflow(std::streambuf::int_type c) {
-    if (c != EOF) {
-        // Append the character to the buffer
-        buffer += c;
-
-        // If the character is a newline, interpret buffer [0] and [1] as a 2-digit number. store that number to int[idx]
-        if (c == '\n') {
-            int idx = buffer[0] - '0'; // convert char to int
-            idx *= 10;
-            idx += buffer[1] - '0'; // convert char to int
-            glInfoMap[idx] = buffer.substr(2);
-            buffer.clear();
-        }
-    }
-    return c;
-}
-
-std::streambuf::int_type GLInfo::sync() {
-    if (!buffer.empty()) {
-        int idx = buffer[0] - '0'; // convert char to int
-        idx *= 10;
-        idx += buffer[1] - '0'; // convert char to int
-        glInfoMap[idx] = buffer.substr(2);
-        buffer.clear();
-    }
-    return 0;
-}
-
-GLInfo glStatus;
-std::ostream glInfoOut(&glStatus);
-
-
 std::vector<thingHolder> staticPoints;
 
 void addDbgPt(int idx, float xyz[3], float size, float weight) {
@@ -187,65 +154,15 @@ void addDbgPt(int idx, float xyz[3], float size, float weight) {
 
 }
 
-//I did write these, c++ was annoying me my not letting me have the hex
 #ifndef FOLDING_REGION_WHY_CPLUSPLUS_WHY
 int_fast8_t xx8(char input) {
     return static_cast<int_fast8_t>(input);
 }
 
-int_fast16_t xx16(int input) {
-    return static_cast<int_fast16_t>(input);
-}
-
-int_fast64_t xx64(long input) {
-    return static_cast<int_fast64_t>(input);
-}
-
-std::string xs8(int_fast8_t value) {
-    std::stringstream ss;
-    ss << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(value);
-    return ss.str();
-}
-
-
 #endif
 
 
 int8_t doorOpenPercent = 0;
-
-
-int8_t animateDoor = 3;
-
-
-int winner;
-
-std::string getUName() {
-    const char *username;
-
-#ifdef _WIN32
-    username = std::getenv("USERNAME");
-#else
-    username = std::getenv("USER");
-#endif
-
-    if (username != nullptr) {
-        return username;
-    } else {
-        return "Unable to get username.";
-    }
-}
-
-std::string getDayOfWeek() {
-    std::vector<std::string> daysOfWeek = {
-        "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
-    };
-
-    auto now = std::chrono::system_clock::now();
-    auto timePoint = std::chrono::system_clock::to_time_t(now);
-    auto tm = *std::localtime(&timePoint);
-
-    return daysOfWeek[tm.tm_wday];
-}
 
 int useTimeToSeedRandomToSetWinner() {
     std::random_device rd;
@@ -266,18 +183,6 @@ std::map<int, std::string> dbgNormMap = {
     {NEG_NORM, "Negative Only"}
 };
 
-
-int nextDbgState() {
-    if (dbgNormals == NEG_NORM) {
-        return DBG_NORM_OFF;
-    } else {
-        return dbgNormals + 1;
-    }
-}
-
-int cardRotState = CARD_ROT_NONE;
-int cardRotPercent = 0; //out of 100, but will be scaled
-int cardRotSpeed = 1;
 int dbgNormals = 0;
 uint8_t enabledFaces = 0b00111111;
 
@@ -322,7 +227,6 @@ void glNormal3fvd(float whyAreMyNormalsBroken[3]) {
     }
 }
 
-
 bool selecting = false;
 int xClick;
 int yClick;
@@ -340,7 +244,6 @@ float moveSpeed = 0.5f;
 float cardDist;
 
 bool bufferPeeking = false;
-bool windowFocused = false;
 bool selectLock = false;
 bool selectLockingEnabled = false;
 bool hasCrystal = false;

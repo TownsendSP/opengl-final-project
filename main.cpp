@@ -5,7 +5,7 @@
 # include <GL/glut.h>
 #endif
 
-#define PI 3.1415926
+
 
 #include "src/globals.h"
 #include <iostream>
@@ -15,21 +15,15 @@
 #include <string>
 #include <map>
 #include <filesystem>
-
-//My Imports and Defines
-
 #include "src/Coord.h"
 #include "src/Camera.h"
 #include "src/things.h"
 #include "src/ColorData.h"
-
 #include "src/lighting.h"
 #include "src/LeftVP.h"
-
 #include "src/Scenedraw.h"
 #include "src/textureLoader.h"
 #include "src/fSceneObjs.h"
-
 #include "src/CampFire.h"
 #include "src/modelLoader.h"
 
@@ -71,18 +65,16 @@ float sensitivity = 0.01f;
 std::map<int, std::string> debugMap;
 
 int alt, ctrl, modifiers, shift;
-std::vector<std::string> instructionVec = {
-        "     Gameplay: ",
-        "Find the blue crystal",
-        "Pick it up by clicking it",
-        "Bring it to the campfire",
-        "while holding the crystal, light the campfire",
-        "	by clicking the campfire",
-        "Now, you can play the movie onscreen"
 
-
-};
-
+void printinstructionsfromtxt() {
+    std::ifstream file(RESOURCEDIR "/instructions.txt");
+    if (!file) {return;}
+    std::string line;
+    while (std::getline(file, line)) {
+        std::cout << line << std::endl;
+    }
+    file.close();
+}
 
 std::vector<std::string> gameplayVec = {
         "     Gameplay: ",
@@ -238,13 +230,7 @@ void setupRight() {
     glEnable(GL_LINE_SMOOTH);
     glShadeModel(GL_SMOOTH);
 
-    if (cardRotState == CARD_ROT_REL) {
-        cardRotPercent = std::clamp((100.0f - ((cardDist - 2.0f) / 8.0f * 100.0f)) * cardRotSpeed, 0.0f, 100.0f);
 
-        //cardRotPercent = std::clamp(cardRotSpeed * ((cardDist + 1.0f) / 8.0f) * 100.0f, 0.0f, 100.0f);
-
-        //rdRotPercent = (std::clamp((((cardDist+1)9)*100.0f), 0.0f, 100.0f));
-    }
     updateSpotlight();
     headLamp.setup();
 
@@ -254,9 +240,6 @@ void setupRight() {
 
 
 void finalCrystal() {
-
-
-
     shinyBlue.apply();
     glPushMatrix();
     glShadeModel(GL_FLAT);
@@ -274,26 +257,30 @@ void finalCrystal() {
 
 void drawLitShapes() {
     glEnable(GL_LIGHTING);
-    // sunLight.enable();
-    float lightAmb[] = {0.5, 0.5, 0.5, 1.0}; // Warm ambient light
+    sunLight.enable();
+    float lightAmb[] = {0.2, 0.2, 0.2, 1.0}; // Warm ambient light
     float lightDifAndSpec[] = {1.0, 1.0, 1.0, 1.0}; // Warm diffuse and specular light
     float lightPos[] = {0.0, 20.0, 0.0, 0.0}; // Position remains the same
-    // Cool global ambient light
-
+    // // Cool global ambient light
+    //
     glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDifAndSpec);
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightDifAndSpec);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-
     glEnable(GL_LIGHT0);
+    headLamp.enable();
+    brightRed.lightswitch(makeflames);
 
-     sunLight.enable();
+    brightRed.enable();
+
+
+
+    // testflat();
+
      glEnable(GL_LIGHT_MODEL_AMBIENT);
-    //smooth shading
-    glShadeModel(GL_SMOOTH);
-
 
     finalCrystal();
+    glShadeModel(GL_SMOOTH);
 
     testcampfire.drawBase();
 
@@ -309,9 +296,7 @@ void drawLitShapes() {
 //    floorMat.apply();
 
 
-    glDisable(GL_TEXTURE_2D);
-    wallMat.apply();
-    drawPlane(Coord(-50, 0.2, -50), Coord(50, 0.2, 50), Coord(0,1,0), 200);
+
 
     glutSwapBuffers();
 }
@@ -391,7 +376,7 @@ void showKeybindings() {
 void setupObjects() {
     cam = Camera(Coord(17.76, 12, 17.70), Coord(17.10, 11.84, 17), Coord(0, 1, 0));
     debugXes.emplace_back(Coord(0, 0, 0), 100, 2);
-    headLamp.enable();
+
 
     //giving them access to the debugging info map
     cam.setDebugStringAdd(&debugMap);
@@ -415,17 +400,12 @@ void setupLights() {
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightDifAndSpec);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
-    // Spotlight headlamp = Spotlight(Light::lightNum(GL_LIGHT2), ColorData(cam.pos, 0.0f), ColorData(0.2, 0.2, 0.2, 1.0), ColorData(1.0, 1.0, 1.0, 1.0),
-    //                                ColorData(1.0, 1.0, 1.0, 1.0), cam.tgt, 30.0, 1.0);
-
     //enabling global ambient light:
     //
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb); // Global ambient light.
     //setup the sun using a positional light:
-    sunLight.setup();
-    sunLight.enable();
     glEnable(GL_LIGHT_MODEL_AMBIENT);
-    headLamp.enable();
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
 }
@@ -433,10 +413,6 @@ void setupLights() {
 
 
 void setup() {
-    winner = useTimeToSeedRandomToSetWinner();
-    // Light property vectors.
-
-
     float lightAmb[] = {0.8, 0.7, 0.2, 1.0}; // Warm ambient light
     float lightDifAndSpec[] = {0.8, 0.7, 0.2, 1.0}; // Warm diffuse and specular light
     float lightPos[] = {0.0, 7.0, 0.0, 1.0}; // Position remains the same;
@@ -446,9 +422,7 @@ void setup() {
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightDifAndSpec);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
-    // Spotlight headlamp = Spotlight(Light::lightNum(GL_LIGHT2), ColorData(cam.pos, 0.0f), ColorData(0.2, 0.2, 0.2, 1.0), ColorData(1.0, 1.0, 1.0, 1.0),
-    //                                ColorData(1.0, 1.0, 1.0, 1.0), cam.tgt, 30.0, 1.0);
-
+    brightRed.setup();
     //enabling global ambient light:
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb);
     glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE); // Enable local viewpoint.
@@ -644,6 +618,7 @@ void keyboard(unsigned char key, int x, int y) {
 
         case '?': //print keybinds:
             showKeybindings();
+            printinstructionsfromtxt();
             break;
 
         case 27: //Escape Key: Exit
@@ -783,11 +758,8 @@ void specialKeyboard(int key, int x, int y) {
     glutPostRedisplay();
 }
 
-#endif
 
-void cheatythread(){
 
-}
 
 void menu(int id) {
     switch (id) {
@@ -802,12 +774,12 @@ void menu(int id) {
         break;
         case 5:
             glout << "Loading Next Video" << '\n';
-            std::string nextPath = ANIMBASEDIR + std::to_string(animdirnum + 1) + "/";
-            std::filesystem::exists(nextPath) && std::filesystem::is_directory(nextPath);
-            animdirnum++;
-            //manually free the memory
-            setupTextures_24();
-            break;
+        std::string nextPath = ANIMBASEDIR + std::to_string(animdirnum + 1) + "/";
+        std::filesystem::exists(nextPath) && std::filesystem::is_directory(nextPath);
+        animdirnum++;
+        //manually free the memory
+        setupTextures_24();
+        break;
     }
 }
 
@@ -838,6 +810,9 @@ void makeMenu(void) {
 
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
+#endif
+
+
 
 
 #ifndef FOLDING_REGION_ANIMATION
@@ -886,6 +861,10 @@ void animateClip(int value) {
         if(animClip){
             currFrame = (currFrame + 1) % numAnimFrames;
             debugMap[60 - 25] = "Frame: " + std::to_string(currFrame);
+        }else {
+            if(!activated) {
+                currFrame = textureMap_24["canal"];
+            }
         }
     }
     glutTimerFunc(animPeriod, animateClip, 1); // ANIMSPEED times per second
@@ -916,15 +895,7 @@ void animate(int value) {
 }
 #endif
 
-void printinstructionsfromtxt() {
-    std::ifstream file(RESOURCEDIR "/instructions.txt");
-    if (!file) {return;}
-    std::string line;
-    while (std::getline(file, line)) {
-        std::cout << line << std::endl;
-    }
-    file.close();
-}
+
 
 int main(int argc, char **argv) {
     glutInit(&argc, argv);

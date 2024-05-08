@@ -43,7 +43,7 @@ std::string xs8(int_fast8_t value);
 #define WiREFRAME 0x19
 #define SOLID 0x1A
 
-//used for determining whether to convert color values to 0-1 range
+//used for determining whether to convert.sh color values to 0-1 range
 #define PLZCONVERT true
 #define NOCONVERT false
 
@@ -188,9 +188,6 @@ protected:
     std::streambuf::int_type sync();
 
 };
-
-extern GLInfo glStatus;
-extern std::ostream glInfoOut;
 #endif
 
 
@@ -273,7 +270,6 @@ extern float moveSpeed;
 extern float cardDist;
 
 extern bool bufferPeeking;
-extern bool windowFocused;
 extern bool selectLock;
 extern bool selectLockingEnabled;
 extern bool hasCrystal;
@@ -308,6 +304,7 @@ extern bool flamenoanim;
 
 extern int animdirnum;
 
+const std::vector<std::string> texturefiles = {"hat", "star", "grass", "flame24", "small", "geom", "canal", "ba"};
 
 
 #endif //GLOBALS_H

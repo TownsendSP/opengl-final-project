@@ -32,6 +32,9 @@ void Light::enable() const {
     if(enabled) {
         glEnable(whichLight);
     }
+    else {
+        glDisable(whichLight);
+    }
 }
 
 void Light::disable() const {

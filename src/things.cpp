@@ -142,6 +142,31 @@ void drawFlatPlaneXY(Coord corner1, Coord corner2, int numSubDivisions) { //plan
     }
 }
 
+void drawFlatPlaneXZ(Coord corner1, Coord corner2, int numSubDivisions, GLuint textureId) { //plane in the XZ plane
+    float xStep = (corner2.X - corner1.X) / numSubDivisions;
+    float zStep = (corner2.Z - corner1.Z) / numSubDivisions;
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    // Specify material properties
+
+    for (int i = 0; i < numSubDivisions; ++i) {
+        glBegin(GL_TRIANGLE_STRIP);
+        for (int j = 0; j <= numSubDivisions; ++j) {
+            float s = i / (float)numSubDivisions;
+            float t = j / (float)numSubDivisions;
+            glTexCoord2f(s, t);
+            glVertex3f(corner1.X + i * xStep, corner1.Y, corner1.Z + j * zStep);
+            s = (i + 1) / (float)numSubDivisions;
+
+            glTexCoord2f(s, t);
+            glVertex3f(corner1.X + (i + 1) * xStep, corner1.Y, corner1.Z + j * zStep);
+        }
+        glEnd();
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
 void drawFlatPlaneXZ(Coord corner1, Coord corner2, int numSubDivisions) { //plane in the XZ plane
     float xStep = (corner2.X - corner1.X) / numSubDivisions; // NOLINT(*-narrowing-conversions)
     float zStep = (corner2.Z - corner1.Z) / numSubDivisions; // NOLINT(*-narrowing-conversions)

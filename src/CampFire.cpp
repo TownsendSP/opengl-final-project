@@ -33,10 +33,8 @@ float Flame::vknots[14] =
 float Flame::vTextureknots[4] = {0.0, 0.0, 7.0, 7.0};
 
 float Flame::uTextureknots[4] = {0.0, 0.0, 12.0, 12.0};
-//
-// void Flame::modControlPoints() {
-//
-// }
+
+
 void dirtyBlend() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
@@ -50,9 +48,7 @@ void Flame::predraw() {
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
-    // glEnable(GL_LIGHT0);
-    // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globAmb);
-    // glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+
     glDisable(GL_LIGHTING);
 
     brightRed.setup();
@@ -69,7 +65,7 @@ void Flame::postdraw() {
     // glDisable(GL_AUTO_NORMAL);
 
     glDisable(GL_TEXTURE_2D); // Disable texturing.
-    glEnable(GL_LIGHTING);
+
 }
 
 void Flame::draw() {
@@ -79,7 +75,6 @@ void Flame::draw() {
                     30, 3, controlPoints[0][0], 4, 4, GL_MAP2_VERTEX_3);
     gluNurbsSurface(nurbsObject, 4, uTextureknots, 4, vTextureknots,
                     4, 2, texturePoints[0][0], 2, 2, GL_MAP2_TEXTURE_COORD_2);
-    gluEndSurface(nurbsObject);
     gluEndSurface(nurbsObject);
     glPopMatrix();
 }
@@ -116,19 +111,6 @@ void Flame::resetControlPoints(void) { // sets the x of all
     }
 }
 
-
-// Reset control points.
-// void Flame::resetControlPoints(void) {
-//     int i, j;
-//
-//     for (i = 0; i < 15; i++)
-//         for (j = 0; j < 10; j++) {
-//             controlPoints[i][j][0] = -2.5 + taperX(j) * 0.5 + shiftX(i);
-//             controlPoints[i][j][1] = funcFlameY(j);
-//             controlPoints[i][j][2] = 6.0 - i;
-//         }
-//     rowCount = columnCount = 0;
-// }
 
 void Flame::animate() {
     //move currY towards targetY
@@ -192,7 +174,6 @@ Campfire::Campfire(int numFlames, float bottomRada) {
 }
 
 void makeLog(float rad, float len, GLUquadricObj *quadric) {
-    glDisable(hallLight);
     tableMat.apply();
     glPushMatrix();
     gluCylinder(quadric, rad / 0.7, rad, len, 20, 10);
@@ -219,10 +200,9 @@ void Campfire::fetchFlame(int i) {
 }
 
 void Campfire::drawBase() {
-    hallLight.enable();
-    if(makeflames){
-        brightRed.enable();
-    }
+
+    brightRed.enable();
+
     tableMat.apply();
     // glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // Set alpha to 0.5
     // draw 10 cylinders, each rotated 72 degrees
@@ -235,7 +215,7 @@ void Campfire::drawBase() {
         glPopMatrix();
     }
     gluDeleteQuadric(quadric);
-    brightRed.disable();
+
 }
 
 void Campfire::drawFlames() {

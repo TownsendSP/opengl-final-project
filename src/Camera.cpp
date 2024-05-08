@@ -153,20 +153,7 @@ Coord hallTopFarRight = Coord(halltfrF);
 
 
 int Camera::whichSpace(Coord posi) {
-    if (posi.X > roomBottomNearLeft.X+moveSpeed/2 && posi.X < roomTopFarRight.X &&
-        posi.Y > roomBottomNearLeft.Y && posi.Y < roomTopFarRight.Y &&
-        posi.Z > roomBottomNearLeft.Z && posi.Z < roomTopFarRight.Z) {
-
-        whichPlace = IN_ROOM;
-    }
-    if (posi.X > hallBottomNearLeft.X && posi.X < hallTopFarRight.X-moveSpeed/2 &&
-        posi.Y > hallBottomNearLeft.Y && posi.Y < hallTopFarRight.Y &&
-        posi.Z > hallBottomNearLeft.Z && posi.Z < hallTopFarRight.Z) {
-        whichPlace = IN_HALL;
-    }
-    std::string place = whichPlace == IN_ROOM ? "Room" : "Hall";
-    debugMap[60-21] = "Location: " + place;
-    return whichPlace;
+    return 0;
 }
 
 int Camera::collisionYZ(Coord pos) {

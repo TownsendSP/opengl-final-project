@@ -18,9 +18,9 @@
 #include "fSceneObjs.h"
 
 #include "Coord.h"
-#include "testingFunctions.h"
 #include "modelLoader.h"
 #include "lighting.h"
+#include "things.h"
 
 
 void testTexturedPlane(Coord locPostTrans, int properTexture) {
@@ -58,6 +58,7 @@ void makeGround() {
     glPopMatrix();
 }
 
+
 void hat() {
     castIronMat.apply();
     glPushMatrix();
@@ -78,7 +79,6 @@ void drawTexEgs() {
     int hatTx = textureMap_24["hat"];
     int baTest = textureMap_24["grass"];
 
-    debugMap[60-1] = "str: " + std::to_string(startext) + " hat: " + std::to_string(hatTx) + " ba: " + std::to_string(baTest);
 
 
     // testTexturedPlane(Coord(30, 10, -5), startext);
